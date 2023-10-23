@@ -1,22 +1,55 @@
 #include<iostream>
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
+#include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+//#include <shader.hpp>
 
 // Vertex Shader source code
 const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
+// Input vertex data, different for all executions of this shader.
+"layout(location = 0) in vec3 vertexPos;"
+
+// Add a new output for the gradient factor
+"out float gradientFactor;"
+
+// Add uniform variable for the transform matrix
+"uniform mat4 transform;"
+
+"void main() {"
+
+"gl_Position.xyz = vertexPos;"
+"gl_Position.w = 1.0; //HOMOGENEOUS COORD"
+
+// Apply the transform on the gl_Position => final position of each vertex
+"gl_Position = transform * gl_Position;"
+
+// Calculate the gradient factor using the y-coordinate.
+// This assumes y goes from -0.5 (bottom) to 0.5 (top). Adjust as necessary.
+"gradientFactor = vertexPos.y + 0.5;"
+"}";
+
 //Fragment Shader source code
 const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(0.0f, 1.0f, 1.0f, 1.0f);\n"
-"}\n\0";
+// Output data
+"out vec4 fragColor;"
 
+// The input gradient factor from the vertex shader
+"in float gradientFactor;"
+
+
+"void main(){"
+// Define the two colors for the gradient
+"vec4 bottomColor = vec4(0.0, 0.5, 1.0, 1.0); // dark blue"
+"vec4 topColor = vec4(0.8, 0.8, 1.0, 1.0);   // almost white"
+
+// Interpolate between the two colors based on the gradientFactor
+"fragColor = mix(bottomColor, topColor, gradientFactor);"
+
+"}";
+
+float sx = 1.0f, sy = 1.5f, sz = 0.0f;
 
 int main()
 {
@@ -134,10 +167,16 @@ int main()
 	// Enable the Vertex Attribute so that OpenGL knows to use it
 	glEnableVertexAttribArray(0);
 
+	
+
 	// Bind both the VBO and VAO to 0 so that we don't accidentally modify the VAO and VBO we created
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	
+	glm::mat4 trans(1.0f);
+	trans = glm::scale(trans, glm::vec3(sx, sy, sz));
+	glShadeModel(GL_SMOOTH);
 
 
 	// Main while loop
@@ -161,7 +200,11 @@ int main()
 		glfwPollEvents();
 	}
 
+	// Use our shader
+	glUseProgram(vertexShader);
 
+	unsigned int transformLoc = glGetUniformLocation(vertexShader, "transform");
+	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 	// Delete all the objects we've created
 	glDeleteVertexArrays(1, &VAO);

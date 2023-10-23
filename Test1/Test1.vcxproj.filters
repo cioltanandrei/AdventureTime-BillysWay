@@ -62,6 +62,9 @@
     <ClInclude Include="VBO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Cursuri\Anul III\Semestrul I\Advanced computer graphics\Labs\Lab3_1\Lab3_1\shader.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
