@@ -3,17 +3,17 @@
 // Output data
 out vec4 fragColor;
 
-// The input variable from the vertex shader (Attention! Same name and same type) 
-//in vec4 vertexColor;  
+// The input gradient factor from the vertex shader
+in float gradientFactor;
 
-uniform vec4 objectColor; //color from main
 
 void main()
 {
-	// Output color = red
-	//fragColor = vertexColor;
-	//fragColor=vec4(0.0, 0.7, 0.0, 1.0); 
-	
-	//ex2
-	fragColor = objectColor;
+    // Define the two colors for the gradient
+    vec4 bottomColor = vec4(0.0, 0.5, 1.0, 1.0); // dark blue
+    vec4 topColor = vec4(0.8, 0.8, 1.0, 1.0);   // almost white
+
+    // Interpolate between the two colors based on the gradientFactor
+    fragColor = mix(bottomColor, topColor, gradientFactor);
+
 }

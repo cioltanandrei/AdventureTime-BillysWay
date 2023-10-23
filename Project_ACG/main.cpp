@@ -18,8 +18,8 @@
 
 //variables
 GLFWwindow* window;
-const int width = 1024, height = 1024;
-float sx = 1.5f, sy = 0.5f, sz = 0;
+const int width = 2064, height = 1072;
+float sx = 1.0f, sy = 1.5f, sz = 0.0f;
 
 
 int main(void)
@@ -55,8 +55,8 @@ int main(void)
 	//specify the size of the rendering window
 	glViewport(0, 0, width, height);
 
-	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	// blue background
+	glClearColor(0.8f, 0.9f, 1.0f, 0.8f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 
@@ -64,15 +64,24 @@ int main(void)
 	GLuint programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
 
 	float vertices[] = {
-		0.5f,  0.5f, 0.0f,  // top right
-		0.5f, -0.5f, 0.0f,  // bottom right
+		 0.0f,  0.5f, 0.0f,  // top center
 		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
+		0.5f, -0.5f, 0.0f,   // bottom right
+
+		0.25f, -0.5f, 0.0f,
+		0.5f, 0.25f, 0.0f,
+		1.0f, -0.5f, 0.0f,
+
+		-0.25f, -0.5f, 0.0f,
+		-0.5f, 0.25f, 0.0f,
+		-1.0f, -0.5f, 0.0f
+
 	};
 
-	unsigned int indices[] = {  // note that we start from 0!
-		0, 3, 1,  // first Triangle
-		1, 3, 2,   // second Triangle
+	unsigned int indices[] = {
+		0, 1, 2, // Left slope
+		3, 4 ,5,
+		6, 7, 8
 	};
 
 	// A Vertex Array Object (VAO) is an object which contains one or more Vertex Buffer Objects and is designed to store the information for a complete rendered object. 
@@ -105,21 +114,8 @@ int main(void)
 
 	//create matrices for transforms
 	glm::mat4 trans(1.0f);
-	//trans = glm::scale(trans, glm::vec3(sx, sy, sz));
-
-	
-	glm::vec3 positions[] = {
-	glm::vec3(0.0f, 0.0f, 0.0f),
-	glm::vec3(0.2f, 0.5f, -0.15f),
-	glm::vec3(-0.15f, -0.22f, -0.25f),
-	glm::vec3(-0.38f, -0.2f, -0.123f),
-	glm::vec3(0.24f, -0.4f, -0.35f),
-	glm::vec3(-0.17f, 0.3f, -0.75f),
-	glm::vec3(0.93f, -0.2f, -0.75f),
-	glm::vec3(0.15f, 0.2f, -0.25f),
-	glm::vec3(0.15f, 0.7f, -0.55f),
-	glm::vec3(-0.13f, 0.1f, -0.15f)
-	};
+	trans = glm::scale(trans, glm::vec3(sx, sy, sz));
+	glShadeModel(GL_SMOOTH);
 
 	// Check if the window was closed
 	while (!glfwWindowShouldClose(window))
@@ -136,35 +132,12 @@ int main(void)
 		// Use our shader
 		glUseProgram(programID);
 
-		// send variables to shader
-		//unsigned int transformLoc = glGetUniformLocation(programID, "transform");
-		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		unsigned int transformLoc = glGetUniformLocation(programID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		//bind VAO
 		glBindVertexArray(vao);
-		//ex 2
-		//define the green color
-		glm::vec4 greenColor(0.0f, 0.7f, 0.0f, .0f);
-		// Get the location of the 'objectColor' uniform variable
-		unsigned int colorLocation = glGetUniformLocation(programID, "objectColor");
-		// Set the value of the 'objectColor' uniform variable
-		glUniform4fv(colorLocation, 1, glm::value_ptr(greenColor));
-		//ex3+4
-		//trans = glm::rotate(trans, float(glfwGetTime())* glm::radians(0.04f), glm::vec3(0.0, 0.0, 1.0));
-		//ex5
-		for (int i = 0; i < sizeof(positions); i++)
-		{
-			glm::mat4 trans(1.0f);//reset the trans
-			trans=glm::translate(trans, positions[i]);
-			trans = glm::scale(trans, glm::vec3(0.2f, 0.2f, 0.0f));
-			trans = glm::rotate(trans, 25.0f, glm::vec3(0.0, 0.0, 1.0));
-			unsigned int transformLoc = glGetUniformLocation(programID, "transform");
-			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-			//trans = glm::rotate(trans, float(glfwGetTime()) * glm::radians(0.04f), glm::vec3(0.0, 0.0, 1.0));
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		}
-
-		
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 	} 
 	
 	// Cleanup

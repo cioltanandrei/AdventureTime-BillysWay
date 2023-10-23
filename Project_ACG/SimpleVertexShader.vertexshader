@@ -1,11 +1,10 @@
 #version 330 core
 
 // Input vertex data, different for all executions of this shader.
-// The position variable has attribute position 0
 layout(location = 0) in vec3 vertexPos; 
 
-// Specify a color output to the fragment shader
-//out vec4 vertexColor; 
+// Add a new output for the gradient factor
+out float gradientFactor;
 
 // Add uniform variable for the transform matrix
 uniform mat4 transform;
@@ -15,11 +14,10 @@ void main(){
     gl_Position.xyz = vertexPos;
     gl_Position.w = 1.0; //HOMOGENEOUS COORD
 
-	// Apply the transform on the gl_Position => final position of each vertex
-	gl_Position = transform * gl_Position;
+    // Apply the transform on the gl_Position => final position of each vertex
+    gl_Position = transform * gl_Position;
 
-	// Set the output variable to a dark-red color
-	//vertexColor = vec4(0.5, 0.0, 0.0, 1.0); 
-
+    // Calculate the gradient factor using the y-coordinate.
+    // This assumes y goes from -0.5 (bottom) to 0.5 (top). Adjust as necessary.
+    gradientFactor = vertexPos.y + 0.5; 
 }
-
