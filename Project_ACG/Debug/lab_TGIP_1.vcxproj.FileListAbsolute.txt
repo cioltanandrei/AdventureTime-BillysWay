@@ -1,0 +1,3 @@
+C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\Lab3 - OpenGL\Lab3\Debug\ACG_Lab3.exe
+C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\repos\Proiect-ACG\Lab3\Debug\ACG_Project.exe
+C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\repos\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
