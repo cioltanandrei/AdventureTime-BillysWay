@@ -54,6 +54,16 @@ float sx = 1.0f, sy = 1.0f, sz = 0.0f;
 //red triangle
 //float rx = 0.8f, ry = 0.6f, rz = 0.0f;
 
+//miscare stanga dreapta
+glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 0.0f);
+float playerSpeed = 0.001f;
+//jumping
+float playerVelocityY = 0.0f;
+const float gravity = 0.0001f;
+bool isJumping = false;
+const float jumpStrength = 0.01f;
+
+
 //width and height for the window
 int width = 1080, height = 1920;
 
@@ -227,15 +237,49 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.8f, 0.9f, 1.0f, 0.8f);
 		glClear(GL_COLOR_BUFFER_BIT);
+		// Check for input
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+			playerPos.x += playerSpeed;
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+			playerPos.x -= playerSpeed;
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !isJumping)
+		{
+			playerVelocityY = jumpStrength;
+			isJumping = true;
+		}
+
+		// Apply gravity
+		if (isJumping)
+		{
+			playerPos.y += playerVelocityY;
+			playerVelocityY -= gravity;
+		}
+
+		// Simulate ground collision
+		if (playerPos.y < 0.0f) // Assuming ground is at y = -0.5
+		{
+			playerPos.y = 0.0f;
+			isJumping = false;
+			playerVelocityY = 0.0f;
+		}
+
+	
+
+		// Update player transformation matrix
+		glm::mat4 redtrans = glm::mat4(1.0f);
+		redtrans = glm::translate(redtrans, playerPos);
+		redtrans =glm::scale(redtrans, glm::vec3(sx, sy, sz));
 
 		glUseProgram(shaderProgram);
-		glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+		unsigned int transformLocMount = glGetUniformLocation(shaderProgram, "transform");
+		glUniformMatrix4fv(transformLocMount, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
 		glUseProgram(redShaderProgram); // Assuming you have a shader program for red color
-		glUniformMatrix4fv(glGetUniformLocation(redShaderProgram, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+		unsigned int transformLocPlayer = glGetUniformLocation(redShaderProgram, "transform");
+		glUniformMatrix4fv(transformLocPlayer, 1, GL_FALSE, glm::value_ptr(redtrans));
 
 		glBindVertexArray(redVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
