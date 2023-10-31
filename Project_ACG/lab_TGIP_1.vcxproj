@@ -23,8 +23,10 @@
     <ClCompile Include="shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SimpleFragmentShader.fragmentshader" />
-    <None Include="SimpleVertexShader.vertexshader" />
+    <None Include="SimpleFragmentShaderM.fragmentshader" />
+    <None Include="SimpleFragmentShaderP.fragmentshader" />
+    <None Include="SimpleVertexShaderM.vertexshader" />
+    <None Include="SimpleVertexShaderP.vertexshader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E8D7D48F-7AB1-4260-BCEC-8CC11D9FBC01}</ProjectGuid>
