@@ -21,6 +21,15 @@ GLFWwindow* window;
 const int width = 2256, height = 1504;
 //scaling coord for mount
 float sx = 1.0f, sy = 1.0f, sz = 0.0f;
+// Player position
+glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 0.0f);
+float playerSpeed = 0.001f;
+//variables for jump
+float playerVelocityY = 0.0f;
+const float gravity = 0.0001f;
+bool isJumping = false;
+const float jumpStrength = 0.01f;
+
 
 //scaling for window resizing
 void window_callback(GLFWwindow* window, int new_width, int new_height)
@@ -179,7 +188,7 @@ int main(void)
 	//create transform for player
 	glm::mat4 transPlayer(1.0f);
 	transPlayer = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
-	//transPlayer = glm::translate(transPlayer, glm::vec3(-0.9f, -0.9f, 0.0f)); // Adjust the translation for positioning
+
 
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetFramebufferSizeCallback(window, window_callback);
@@ -196,11 +205,39 @@ int main(void)
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT);
+		// Check for input
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+			playerPos.x += playerSpeed;
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+			playerPos.x -= playerSpeed;
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !isJumping)
+		{
+			playerVelocityY = jumpStrength;
+			isJumping = true;
+		}
+
+		// Apply gravity
+		if (isJumping)
+		{
+			playerPos.y += playerVelocityY; // Update player's vertical position
+			playerVelocityY -= gravity; // Apply gravity to vertical velocity
+		}
+
+		// Simulate ground collision
+		if (playerPos.y < 0.0f) // Assuming ground is at y = 0.0
+		{
+			playerPos.y = 0.0f;
+			isJumping = false;
+			playerVelocityY = 0.0f;
+		}
+
+		// Update player transformation matrix
+		transPlayer = glm::mat4(1.0f);
+		transPlayer = glm::translate(transPlayer, playerPos);
+		transPlayer = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
 
 		// Use our shader
 		glUseProgram(programID);
-		
-
 		unsigned int transformLocMount = glGetUniformLocation(programID, "transform");
 		glUniformMatrix4fv(transformLocMount, 1, GL_FALSE, glm::value_ptr(transMount));
 		glBindVertexArray(vaoM);
