@@ -1,5 +1,7 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ACG_Lab3.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ACG_Lab3.vcxproj).  This can lead to incorrect clean and rebuild behavior.
           1 file(s) copied.
           1 file(s) copied.
   main.cpp
-  lab_TGIP_1.vcxproj -> C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\repos\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
+  shader.cpp
+  Generating Code...
+  lab_TGIP_1.vcxproj -> D:\Materii\cursuri\GITHUB\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe

@@ -2,3 +2,4 @@ C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\Lab3 - OpenGL\Lab3\Debug\
 C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\repos\Proiect-ACG\Lab3\Debug\ACG_Project.exe
 C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\repos\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
 C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
+D:\Materii\cursuri\GITHUB\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
