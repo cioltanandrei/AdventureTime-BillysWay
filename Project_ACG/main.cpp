@@ -29,7 +29,8 @@ float playerVelocityY = 0.0f;
 const float gravity = 0.0001f;
 bool isJumping = false;
 const float jumpStrength = 0.01f;
-
+//player size
+int playerSizeX = 0.2;
 
 //scaling for window resizing
 void window_callback(GLFWwindow* window, int new_width, int new_height)
@@ -205,6 +206,13 @@ int main(void)
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Player boundary checks
+		if (playerPos.x + playerSizeX > 1.5f) // Adjusted right boundary to 1.5f
+			playerPos.x = 1.5f - playerSizeX;
+		if (playerPos.x - playerSizeX < -0.1f)
+			playerPos.x = -0.1f + playerSizeX;
+
 		// Check for input
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 			playerPos.x += playerSpeed;
