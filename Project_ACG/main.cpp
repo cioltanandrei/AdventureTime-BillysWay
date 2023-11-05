@@ -31,6 +31,11 @@ bool isJumping = false;
 const float jumpStrength = 0.01f;
 //player size
 int playerSizeX = 0.2;
+// Sword position
+glm::vec3 swordPos = glm::vec3(0.0f, 0.0f, 0.0f);
+//variables for swing
+float swingAngle = 0.0f;
+
 
 //scaling for window resizing
 void window_callback(GLFWwindow* window, int new_width, int new_height)
@@ -44,6 +49,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	std::cout << "The mouse cursor is: " << xpos << " " << ypos << std::endl;
 }
+
 
 int main(void)
 {
@@ -86,6 +92,7 @@ int main(void)
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("SimpleVertexShaderM.vertexshader", "SimpleFragmentShaderM.fragmentshader");
 	GLuint programID2 = LoadShaders("SimpleVertexShaderP.vertexshader", "SimpleFragmentShaderP.fragmentshader");
+	GLuint programID3 = LoadShaders("SimpleVertexShaderS.vertexshader", "SimpleFragmentShaderS.fragmentshader");
 
 	float verticesMountains[] = {
 		 0.0f,  0.5f, 0.0f,  // top center
@@ -115,10 +122,24 @@ int main(void)
 	-0.8f, -0.6f, 0.0f     // Bottom-left vertex
 	};
 
+
 	// Define the indices for the square
 	GLuint indicesPlayer[] ={
 		0, 1, 2,
 		0, 2, 3 
+	};
+
+	float verticesSword[] = {
+	-0.8f, -0.6f, 0.0f,    // Top-left vertex
+	-0.75f, -0.6f, 0.0f,    // Top-right vertex
+	-0.75f, -0.9f, 0.0f,    // Bottom-right vertex
+	-0.8f, -0.9f, 0.0f     // Bottom-left vertex
+	};
+
+	// Define the indices for the rectangle
+	GLuint indicesSword[] = {
+		0, 1, 2,
+		0, 2, 3
 	};
 
 
@@ -181,6 +202,38 @@ int main(void)
 	);
 	glEnableVertexAttribArray(0);
 
+	//Sword Buffer
+
+	GLuint vboS, vaoS, iboS;
+	glGenVertexArrays(1, &vaoS);
+	glGenBuffers(1, &vboS);
+	glGenBuffers(1, &iboS);
+
+	//bind VAO
+	glBindVertexArray(vaoS);
+
+	//bind VBO
+	glBindBuffer(GL_ARRAY_BUFFER, vboS);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesSword), verticesSword, GL_STATIC_DRAW);
+
+
+	//bind IBO
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboS);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesSword), indicesSword, GL_STATIC_DRAW);
+
+	//set attribute pointers
+	glVertexAttribPointer(
+		0,                  // attribute 0, must match the layout in the shader.
+		3,                  // size of each attribute
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		3 * sizeof(float),  // stride
+		(void*)0            // array buffer offset
+	);
+	glEnableVertexAttribArray(0);
+
+
+	
 	//create transform for mountains
 	glm::mat4 transMount(1.0f);
 	transMount = glm::scale(transMount, glm::vec3(sx, sy, sz));
@@ -190,7 +243,11 @@ int main(void)
 	glm::mat4 transPlayer(1.0f);
 	transPlayer = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
 
-
+	//create transform for sword
+	glm::mat4 transSword(1.0f);
+	transSword = glm::scale(transSword, glm::vec3(sx, sy, sz));
+	
+	
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetFramebufferSizeCallback(window, window_callback);
 
@@ -239,10 +296,33 @@ int main(void)
 			playerVelocityY = 0.0f;
 		}
 
+
 		// Update player transformation matrix
 		transPlayer = glm::mat4(1.0f);
-		transPlayer = glm::translate(transPlayer, playerPos);
 		transPlayer = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
+		transPlayer = glm::translate(transPlayer, playerPos);
+		transPlayer = glm::rotate(transPlayer, 108.0f, glm::vec3(sx, sy, 1.5f)); // Rotate around the Z-axis
+
+		// Update sword transformation matrix
+		transSword = glm::mat4(1.0f);
+		transSword = glm::translate(transSword, playerPos);
+		transSword = glm::scale(transSword, glm::vec3(sx, sy, sz));
+		transSword = glm::rotate(transSword, 108.0f, glm::vec3(sx, sy, 1.5f)); // Rotate around the Z-axis
+
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+			// Increase the swing angle by a certain amount
+			swingAngle += 0.04f;
+
+			// Apply rotation to the sword && move with the player
+			transSword = glm::rotate(transSword, swingAngle, glm::vec3(sx, sy, 1.5f)); // Rotate around the Z-axis
+			
+		}
+
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE) {
+			// Return to 0
+			swingAngle = 0.0f;
+		}
+
 
 		// Use our shader
 		glUseProgram(programID);
@@ -256,17 +336,28 @@ int main(void)
 		glUniformMatrix4fv(transformLocPlayer, 1, GL_FALSE, glm::value_ptr(transPlayer));
 		glBindVertexArray(vaoP);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		glUseProgram(programID3);
+		unsigned int transformLocSword = glGetUniformLocation(programID3, "transform");
+		glUniformMatrix4fv(transformLocSword, 1, GL_FALSE, glm::value_ptr(transSword));
+		glBindVertexArray(vaoS);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		
 	} 
 	
 	// Cleanup
 	glDeleteBuffers(1, &vboM);
 	glDeleteBuffers(1, &vboP);
+	glDeleteBuffers(1, &vboS);
 	glDeleteBuffers(1, &iboM);
 	glDeleteBuffers(1, &iboP);
+	glDeleteBuffers(1, &iboS);
 	glDeleteVertexArrays(1, &vaoM);
 	glDeleteVertexArrays(1, &vaoP);
+	glDeleteVertexArrays(1, &vaoS);
 	glDeleteProgram(programID);
 	glDeleteProgram(programID2);
+	glDeleteProgram(programID3);
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
