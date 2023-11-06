@@ -22,13 +22,13 @@ const int width = 2256, height = 1504;
 //scaling coord for mount
 float sx = 1.0f, sy = 1.0f, sz = 0.0f;
 // Player position
-glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 playerPos = glm::vec3(-1.0f, 0.0f, 0.0f);
 float playerSpeed = 0.001f;
 //variables for jump
 float playerVelocityY = 0.0f;
-const float gravity = 0.0001f;
+const float gravity = 0.00002f;
 bool isJumping = false;
-const float jumpStrength = 0.01f;
+const float jumpStrength = 0.005f;
 //player size
 int playerSizeX = 0.2;
 // Sword position
@@ -116,10 +116,10 @@ int main(void)
 	};
 
 	float verticesPlayer[] = {
-	-0.8f, -0.4f, 0.0f,    // Top-left vertex
-	-0.6f, -0.4f, 0.0f,    // Top-right vertex
-	-0.6f, -0.6f, 0.0f,    // Bottom-right vertex
-	-0.8f, -0.6f, 0.0f     // Bottom-left vertex
+	-0.6f, -0.4f, 0.0f,    // Top-left vertex
+	-0.4f, -0.4f, 0.0f,    // Top-right vertex
+	-0.4f, -0.6f, 0.0f,    // Bottom-right vertex
+	-0.6f, -0.6f, 0.0f     // Bottom-left vertex
 	};
 
 
@@ -130,10 +130,10 @@ int main(void)
 	};
 
 	float verticesSword[] = {
-	-0.8f, -0.6f, 0.0f,    // Top-left vertex
-	-0.75f, -0.6f, 0.0f,    // Top-right vertex
-	-0.75f, -0.9f, 0.0f,    // Bottom-right vertex
-	-0.8f, -0.9f, 0.0f     // Bottom-left vertex
+	-0.5f, -0.6f, 0.0f,    // Top-left vertex
+	-0.45f, -0.6f, 0.0f,    // Top-right vertex
+	-0.45f, -0.9f, 0.0f,    // Bottom-right vertex
+	-0.5f, -0.9f, 0.0f     // Bottom-left vertex
 	};
 
 	// Define the indices for the rectangle
@@ -265,15 +265,15 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Player boundary checks
-		if (playerPos.x + playerSizeX > 1.5f) // Adjusted right boundary to 1.5f
+		/*if (playerPos.x + playerSizeX > 1.5f) // Adjusted right boundary to 1.5f
 			playerPos.x = 1.5f - playerSizeX;
 		if (playerPos.x - playerSizeX < -0.1f)
-			playerPos.x = -0.1f + playerSizeX;
+			playerPos.x = -0.1f + playerSizeX;*/
 
 		// Check for input
-		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		if ((glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) && playerPos.x < 0.7f)
 			playerPos.x += playerSpeed;
-		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		if ((glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) && playerPos.x > -1.1f)
 			playerPos.x -= playerSpeed;
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !isJumping)
 		{
@@ -309,16 +309,16 @@ int main(void)
 		transSword = glm::scale(transSword, glm::vec3(sx, sy, sz));
 		transSword = glm::rotate(transSword, 108.0f, glm::vec3(sx, sy, 1.5f)); // Rotate around the Z-axis
 
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 			// Increase the swing angle by a certain amount
-			swingAngle += 0.04f;
+			swingAngle = 7.64f;
 
 			// Apply rotation to the sword && move with the player
 			transSword = glm::rotate(transSword, swingAngle, glm::vec3(sx, sy, 1.5f)); // Rotate around the Z-axis
 			
 		}
 
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE) {
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
 			// Return to 0
 			swingAngle = 0.0f;
 		}
