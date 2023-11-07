@@ -35,6 +35,7 @@ int playerSizeX = 0.2;
 glm::vec3 swordPos = glm::vec3(0.0f, 0.0f, 0.0f);
 //variables for swing
 float swingAngle = 0.0f;
+bool isSwinging = false;
 
 
 //scaling for window resizing
@@ -130,10 +131,10 @@ int main(void)
 	};
 
 	float verticesSword[] = {
-	-0.5f, -0.6f, 0.0f,    // Top-left vertex
-	-0.45f, -0.6f, 0.0f,    // Top-right vertex
-	-0.45f, -0.9f, 0.0f,    // Bottom-right vertex
-	-0.5f, -0.9f, 0.0f     // Bottom-left vertex
+	-0.6f, -0.6f, 0.0f,    // Top-left vertex
+	-0.25f, -0.6f, 0.0f,    // Top-right vertex
+	-0.25f, -0.65f, 0.0f,    // Bottom-right vertex
+	-0.6f, -0.65f, 0.0f     // Bottom-left vertex
 	};
 
 	// Define the indices for the rectangle
@@ -310,17 +311,24 @@ int main(void)
 		transSword = glm::rotate(transSword, 108.0f, glm::vec3(sx, sy, 1.5f)); // Rotate around the Z-axis
 
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-			// Increase the swing angle by a certain amount
-			swingAngle = 7.64f;
+			
+				// Increase the swing angle by a certain amount
+			swingAngle = -3100.45f;
 
 			// Apply rotation to the sword && move with the player
-			transSword = glm::rotate(transSword, swingAngle, glm::vec3(sx, sy, 1.5f)); // Rotate around the Z-axis
+			swordPos.x = 0.19f; // ridica sabia mai sus sau jos fata de player
+			swordPos.y = -0.155f;// muta sabia mai la dreapta sau stanga fata de player
+			transSword = glm::translate(transSword, swordPos);
+			transSword = glm::rotate(transSword, (float)glfwGetTime() * glm::radians(swingAngle), glm::vec3(1.09f, sy, 1.25f)); // Rotate around the Z-axis, sx muta sabia mai la dreapta sau stanga fata de player
+			transSword = glm::scale(transSword, glm::vec3(sx, sy, sz));
+		
 			
 		}
-
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
 			// Return to 0
 			swingAngle = 0.0f;
+			glfwSetTime(0.0); // Reset glfwGetTime()
+
 		}
 
 
