@@ -18,7 +18,7 @@
 
 //variables
 GLFWwindow* window;
-const int width = 2256, height = 1504;
+const int width = 1080 , height = 1920;
 //scaling coord for mount
 float sx = 1.0f, sy = 1.0f, sz = 0.0f;
 // Player position
@@ -31,6 +31,36 @@ bool isJumping = false;
 const float jumpStrength = 0.01f;
 //player size
 int playerSizeX = 0.2;
+
+bool pointInsideAABB(glm::vec3 point, glm::vec3 aabbMin, glm::vec3 aabbMax) {
+	// Check if the point's x coordinate is between the min and max x bounds of the AABB
+	bool insideX = (point.x >= aabbMin.x) && (point.x <= aabbMax.x);
+
+	// Check if the point's y coordinate is between the min and max y bounds of the AABB
+	bool insideY = (point.y >= aabbMin.y) && (point.y <= aabbMax.y);
+
+	// The point is inside the AABB only if it's inside on all three axes
+	return insideX && insideY;
+}
+
+
+void transformPoints(const glm::mat4& trans, float* points, size_t vertexCount) {
+	
+	for (size_t i = 0; i < vertexCount; ++i) {
+		// Create a glm::vec3 from the current set of floats
+		glm::vec3 point(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
+
+		// Transform the point
+		glm::vec4 transformedPoint = trans * glm::vec4(point, 1.0f);
+
+		// Store the transformed point back in the array
+		points[i * 3] = transformedPoint.x;
+		points[i * 3 + 1] = transformedPoint.y;
+		points[i * 3 + 2] = transformedPoint.z;
+	}
+}
+
+
 
 //scaling for window resizing
 void window_callback(GLFWwindow* window, int new_width, int new_height)
@@ -87,6 +117,8 @@ int main(void)
 	GLuint programID = LoadShaders("SimpleVertexShaderM.vertexshader", "SimpleFragmentShaderM.fragmentshader");
 	GLuint programID2 = LoadShaders("SimpleVertexShaderP.vertexshader", "SimpleFragmentShaderP.fragmentshader");
 	GLuint programID3 = LoadShaders("SimpleVertexShaderS.vertexshader", "SimpleFragmentShaderS.fragmentshader");
+	GLuint programID4 = LoadShaders("SimpleVertexShaderE.vertexshader", "SimpleFragmentShaderE.fragmentshader");
+
 	float verticesMountains[] = {
 		 0.0f,  0.5f, 0.0f,  // top center
 		-0.5f, -0.5f, 0.0f,  // bottom left
@@ -116,9 +148,9 @@ int main(void)
 	};
 
 	// Define the indices for the square
-	GLuint indicesPlayer[] = {
+	GLuint indicesPlayer[] ={
 		0, 1, 2,
-		0, 2, 3
+		0, 2, 3 
 	};
 
 	// Sword vertices: 2 rectangles forming a cross
@@ -179,6 +211,8 @@ int main(void)
 	glEnableVertexAttribArray(0);
 	// Unbind VAO
 	glBindVertexArray(0);
+
+
 
 	//Player Buffer
 
@@ -244,6 +278,55 @@ int main(void)
 	// Unbind VAO
 	glBindVertexArray(0);
 
+	//Enemy
+	// Rectangle vertices for the lower right corner
+	float verticesEnemy[] = {
+		0.6f, -0.4f, 0.0f,    // Top-left vertex 
+		0.8f, -0.4f, 0.0f,    // Top-right vertex //max
+		0.8f, -0.6f, 0.0f,    // Bottom-right vertex
+		0.6f, -0.6f, 0.0f     // Bottom-left vertex //min
+	};
+
+	// Define the indices for the lower right rectangle
+	GLuint indicesEnemy[] = { 0, 1, 2, 0, 2, 3 };
+
+	// AABB for the enemy
+	glm::vec3 enemyMin(0.6f, -0.6f, 0.0f); // Bottom-left vertex
+	glm::vec3 enemyMax(0.8f, -0.4f, 0.0f); // Top-right vertex
+	bool pointInsideAABB(glm::vec3 point, glm::vec3 aabbMin, glm::vec3 aabbMax);
+	// Transform sword vertices
+	glm::mat4 transSword(1.0f);
+
+
+	// Create a new VAO, VBO, and EBO for the lower right rectangle
+	GLuint vaoE, vboE, iboE;
+	glGenVertexArrays(1, &vaoE);
+	glGenBuffers(1, &vboE);
+	glGenBuffers(1, &iboE);
+
+	// Bind the VAO for the lower right rectangle
+	glBindVertexArray(vaoE);
+	glBindBuffer(GL_ARRAY_BUFFER, vboE);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesEnemy), verticesEnemy, GL_STATIC_DRAW);
+
+	// Bind the EBO for the lower right rectangle
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboE);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesEnemy), indicesEnemy, GL_STATIC_DRAW);
+
+	//set attribute pointers
+	glVertexAttribPointer(
+		0,                  // attribute 0, must match the layout in the shader.
+		3,                  // size of each attribute
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		3 * sizeof(float),  // stride
+		(void*)0            // array buffer offset
+	);
+	glEnableVertexAttribArray(0);
+	// Unbind VAO
+	glBindVertexArray(0);
+
+
 	//create transform for mountains
 	glm::mat4 transMount(1.0f);
 	transMount = glm::scale(transMount, glm::vec3(sx, sy, sz));
@@ -254,15 +337,21 @@ int main(void)
 	transPlayer = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
 
 	//create transform for sword
-	glm::mat4 transSword(1.0f);
 	glm::vec3 swordOffset = glm::vec3(-0.3f, -0.35f, 0.0f);
-	float angle = glm::radians(-45.0f); // Convert 45 degrees to radians
+	float angle = glm::radians(-90.0f); // Convert 90 degrees to radians
 	double lastFrameTime = glfwGetTime();
 	float currentSwordAngle = 0.0f; // Current angle of the sword
 	float targetSwordAngle = 0.0f; // Target angle for the sword when 'A' is pressed
-	float swordRotationSpeed = 5.0f; // Speed at which the sword will rotate
+	float swordRotationSpeed = 32.0f; // Speed at which the sword will rotate
 	float swordBaseX = (-0.6f + -0.57f) / 2; // Average x position of the bottom vertices
 	glm::vec3 pivotPoint = glm::vec3(swordBaseX, -0.5f, 0.0f); // Pivot is at the bottom center of the blade
+
+	glm::mat4 transEnemy(1.0f);
+	transEnemy = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
+	glm::vec3 enemyPosition = glm::vec3(0.0f, 0.0f, 0.0f); // Starting position
+	glm::vec3 enemyMovementDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // Direction to the left
+	float enemyMovementSpeed = 0.001f; // Adjust the speed as needed
+	bool isEnemyMoving = false;
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetFramebufferSizeCallback(window, window_callback);
 
@@ -279,9 +368,16 @@ int main(void)
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		//close the window with escape
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		{
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+			//glfwTerminate();
+		}
+
 		// Player boundary checks
-		if (playerPos.x + playerSizeX > 1.5f) // Adjusted right boundary to 1.5f
-			playerPos.x = 1.5f - playerSizeX;
+		if (playerPos.x + playerSizeX > 1.15f) // Adjusted right boundary to 1.5f
+			playerPos.x = 1.15f - playerSizeX;
 		if (playerPos.x - playerSizeX < -0.1f)
 			playerPos.x = -0.1f + playerSizeX;
 
@@ -299,8 +395,18 @@ int main(void)
 			playerVelocityY = jumpStrength;
 			isJumping = true;
 		}
+		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+			// Start moving the enemy when 'E' is pressed
+			enemyPosition += enemyMovementDirection * enemyMovementSpeed;
+			isEnemyMoving = true;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
+			// Stop moving the enemy when 'E' is released
+			isEnemyMoving = false;
+		}
+		// Update the enemy's AABB to the new world space position
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			targetSwordAngle = glm::radians(-360.0f); // Desired target angle when 'A' is pressed
+			targetSwordAngle = glm::radians(-540.0f); // Desired target angle when 'A' is pressed
 		}
 		else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE) {
 			targetSwordAngle = 0.0f; // Back to initial position
@@ -324,7 +430,7 @@ int main(void)
 			playerPos.y += playerVelocityY; // Update player's vertical position
 			playerVelocityY -= gravity; // Apply gravity to vertical velocity
 		}
-
+	
 		// Simulate ground collision
 		if (playerPos.y < 0.0f) // Assuming ground is at y = 0.0
 		{
@@ -333,18 +439,21 @@ int main(void)
 			playerVelocityY = 0.0f;
 		}
 
-		// Update player transformation matrix
+		// Update transformation matrix
 		transPlayer = glm::mat4(1.0f);
 		transPlayer = glm::translate(transPlayer, playerPos);
 		transPlayer = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
 
 		transSword = glm::mat4(1.0f);
-
 		transSword = glm::translate(transSword, playerPos + swordOffset); // Position sword relative to player
 		transSword = glm::translate(transSword, pivotPoint); // Move pivot to base of the sword
 		transSword = glm::rotate(transSword, currentSwordAngle, glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around the base
 		transSword = glm::translate(transSword, -pivotPoint); // Move pivot back to original position
 		transSword = glm::scale(transSword, glm::vec3(0.5, 0.5, 0.5)); // Scale if necessary
+
+		transEnemy = glm::mat4(1.0f);
+		transEnemy = glm::scale(transEnemy, glm::vec3(sx, sy, sz));
+		transEnemy = glm::translate(transEnemy, enemyPosition);
 
 		// Use our shader
 		glUseProgram(programID);
@@ -359,26 +468,78 @@ int main(void)
 		glBindVertexArray(vaoP);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		glUseProgram(programID4);
+		unsigned int transformLocEnemy = glGetUniformLocation(programID4, "transform");
+		glUniformMatrix4fv(transformLocEnemy, 1, GL_FALSE, glm::value_ptr(transEnemy));
+		glBindVertexArray(vaoE);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 		glUseProgram(programID3);
 		unsigned int transformLocSword = glGetUniformLocation(programID3, "transSword");
 		glUniformMatrix4fv(transformLocSword, 1, GL_FALSE, glm::value_ptr(transSword));
 		glBindVertexArray(vaoS);
 		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
-	}
 
+		//apply the transform for each point of the sword
+		size_t swordVertexCount = 8; // Number of vertices in the sword array (two rectangles with four vertices each)
+		// Apply transformation to sword vertices array
+		size_t enemyVertexCount = 4;
+		 transformPoints(transSword, verticesSword, swordVertexCount);
+		 transformPoints(transEnemy, verticesEnemy, enemyVertexCount);
+		 glm::vec3 enemyMinWorld = enemyMin + enemyPosition;
+		 glm::vec3 enemyMaxWorld = enemyMax + enemyPosition;
+		 //for (size_t i = 0; i < enemyVertexCount; ++i) {
+			// std::cout << "Enemy Vertex " << i << ": ("
+			//	 << verticesEnemy[i * 3] << ", "     // X coordinate
+			//	 << verticesEnemy[i * 3 + 1] << ", " // Y coordinate
+			//	 << verticesEnemy[i * 3 + 2] << ")"  // Z coordinate
+			//	 << std::endl;
+		 //}
+		/* std::cout << "Enemy AABB minWorld: ("
+			 << enemyMinWorld.x << ", "
+			 << enemyMinWorld.y << ", "
+			 << enemyMinWorld.z << ")" << std::endl;
+
+		 std::cout << "Enemy AABB maxWorld: ("
+			 << enemyMaxWorld.x << ", "
+			 << enemyMaxWorld.y << ", "
+			 << enemyMaxWorld.z << ")" << std::endl;*/
+		// Check for collision
+		bool collisionDetected = false;
+		for (int i = 0; i < swordVertexCount; ++i) {
+			// Create a glm::vec3 from the current set of floats
+			glm::vec3 point(verticesSword[i * 3], verticesSword[i * 3 + 1], verticesSword[i * 3 + 2]);
+			/*std::cout << "Checking point: ("
+				<< point.x << ", "
+				<< point.y << ", "
+				<< point.z << ")" << std::endl;*/
+			if (pointInsideAABB(point, enemyMinWorld, enemyMaxWorld)) {
+				std::cout << "Point inside!!" << std::endl;
+				/*collisionDetected = true;
+				break;*/
+			}
+		}
+		if(collisionDetected == true)
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+	} 
+	
 	// Cleanup
 	glDeleteBuffers(1, &vboM);
 	glDeleteBuffers(1, &vboP);
 	glDeleteBuffers(1, &vboS);
+	glDeleteBuffers(1, &vboE);
 	glDeleteBuffers(1, &iboM);
 	glDeleteBuffers(1, &iboP);
 	glDeleteBuffers(1, &iboS);
+	glDeleteBuffers(1, &iboE);
 	glDeleteVertexArrays(1, &vaoM);
 	glDeleteVertexArrays(1, &vaoP);
 	glDeleteVertexArrays(1, &vaoS);
+	glDeleteVertexArrays(1, &vaoE);
 	glDeleteProgram(programID);
 	glDeleteProgram(programID2);
 	glDeleteProgram(programID3);
+	glDeleteProgram(programID4);
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
