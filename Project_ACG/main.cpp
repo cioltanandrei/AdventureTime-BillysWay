@@ -36,25 +36,11 @@ glm::vec3 enemyPosition = glm::vec3(0.0f, 0.0f, 0.0f); // Starting position
 glm::vec3 enemyMovementDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // Direction to the left
 float enemyMovementSpeed = 0.001f; // Adjust the speed as needed
 bool isEnemyMoving = false;
-
-
-
-void transformPoints(const glm::mat4& trans, float* points, size_t vertexCount) {
-
-	for (size_t i = 0; i < vertexCount; ++i) {
-		// Create a glm::vec3 from the current set of floats
-		glm::vec3 point(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
-
-		// Transform the point
-		glm::vec4 transformedPoint = trans * glm::vec4(point, 1.0f);
-
-		// Store the transformed point back in the array
-		points[i * 3] = transformedPoint.x;
-		points[i * 3 + 1] = transformedPoint.y;
-		points[i * 3 + 2] = transformedPoint.z;
-	}
-}
-
+bool isPlayerAttacking = false;
+bool collisionDetected = false;
+bool enemyIsRunning = false;
+const int enemyInitialHealth = 7;
+int enemyHealth = enemyInitialHealth;
 
 //scaling for window resizing
 void window_callback(GLFWwindow* window, int new_width, int new_height)
@@ -334,12 +320,7 @@ int main(void)
 	float swordBaseX = (-0.6f + -0.57f) / 2; // Average x position of the bottom vertices
 	glm::vec3 pivotPoint = glm::vec3(swordBaseX, -0.5f, 0.0f); // Pivot is at the bottom center of the blade
 
-
-
 	glfwSetFramebufferSizeCallback(window, window_callback);
-
-	bool isPlayerAttacking = false;
-	bool collisionDetected = false;
 
 	// Check if the window was closed
 	while (!glfwWindowShouldClose(window))
@@ -380,7 +361,17 @@ int main(void)
 			playerVelocityY = jumpStrength;
 			isJumping = true;
 		}
-		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+
+		if (enemyHealth <= enemyInitialHealth / 2) { // Check if the enemy has lest than half of its base health
+			enemyIsRunning = true;
+		}
+
+		if (collisionDetected == false && enemyIsRunning == false) { // Check if the enemy can still move towards the player
+			enemyPosition += enemyMovementDirection * enemyMovementSpeed;
+			isEnemyMoving = true;
+		}
+
+		/*if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
 			if (collisionDetected == false) {
 				// Start moving the enemy when 'E' is pressed
 				enemyPosition += enemyMovementDirection * enemyMovementSpeed;
@@ -390,7 +381,7 @@ int main(void)
 		else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
 			// Stop moving the enemy when 'E' is released
 			isEnemyMoving = false;
-		}
+		}*/
 		// Update the enemy's AABB to the new world space position
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			targetSwordAngle = glm::radians(-540.0f); // Desired target angle when 'A' is pressed
@@ -493,10 +484,13 @@ int main(void)
 		else {
 			collisionDetected = false;
 		}
-		//if (collisionDetected && isPlayerAttacking) {
-		if (collisionDetected && isPlayerAttacking == true) {
-			enemyPosition.x += 0.10f;
-			collisionDetected = false;
+		if (collisionDetected && isPlayerAttacking) { // Check if the player hits the enemy
+			enemyPosition.x += 0.10f;  // the enemy is knocked back
+			collisionDetected = false; // the collision disappears
+			enemyHealth--;  // decrease the health of the enemy
+			if (enemyHealth == 0) {
+				glfwSetWindowShouldClose(window, GLFW_TRUE); // if the enemy is dead, the game ends
+			}
 		}
 	}
 
