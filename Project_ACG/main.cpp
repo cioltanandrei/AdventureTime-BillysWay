@@ -18,7 +18,7 @@
 
 //variables
 GLFWwindow* window;
-const int width = 1080 , height = 1920;
+const int width = 1080, height = 1920;
 //scaling coord for mount
 float sx = 1.0f, sy = 1.0f, sz = 0.0f;
 // Player position
@@ -31,21 +31,16 @@ bool isJumping = false;
 const float jumpStrength = 0.01f;
 //player size
 int playerSizeX = 0.2;
+//Enemy 
+glm::vec3 enemyPosition = glm::vec3(0.0f, 0.0f, 0.0f); // Starting position
+glm::vec3 enemyMovementDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // Direction to the left
+float enemyMovementSpeed = 0.001f; // Adjust the speed as needed
+bool isEnemyMoving = false;
 
-bool pointInsideAABB(glm::vec3 point, glm::vec3 aabbMin, glm::vec3 aabbMax) {
-	// Check if the point's x coordinate is between the min and max x bounds of the AABB
-	bool insideX = (point.x >= aabbMin.x) && (point.x <= aabbMax.x);
-
-	// Check if the point's y coordinate is between the min and max y bounds of the AABB
-	bool insideY = (point.y >= aabbMin.y) && (point.y <= aabbMax.y);
-
-	// The point is inside the AABB only if it's inside on all three axes
-	return insideX && insideY;
-}
 
 
 void transformPoints(const glm::mat4& trans, float* points, size_t vertexCount) {
-	
+
 	for (size_t i = 0; i < vertexCount; ++i) {
 		// Create a glm::vec3 from the current set of floats
 		glm::vec3 point(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
@@ -61,18 +56,11 @@ void transformPoints(const glm::mat4& trans, float* points, size_t vertexCount) 
 }
 
 
-
 //scaling for window resizing
 void window_callback(GLFWwindow* window, int new_width, int new_height)
 {
 	//what should we do here?
 	glViewport(0, 0, new_width, new_height);
-}
-
-//Handling cursor position
-void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	std::cout << "The mouse cursor is: " << xpos << " " << ypos << std::endl;
 }
 
 int main(void)
@@ -148,9 +136,9 @@ int main(void)
 	};
 
 	// Define the indices for the square
-	GLuint indicesPlayer[] ={
+	GLuint indicesPlayer[] = {
 		0, 1, 2,
-		0, 2, 3 
+		0, 2, 3
 	};
 
 	// Sword vertices: 2 rectangles forming a cross
@@ -346,15 +334,12 @@ int main(void)
 	float swordBaseX = (-0.6f + -0.57f) / 2; // Average x position of the bottom vertices
 	glm::vec3 pivotPoint = glm::vec3(swordBaseX, -0.5f, 0.0f); // Pivot is at the bottom center of the blade
 
-	glm::mat4 transEnemy(1.0f);
-	transEnemy = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
-	glm::vec3 enemyPosition = glm::vec3(0.0f, 0.0f, 0.0f); // Starting position
-	glm::vec3 enemyMovementDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // Direction to the left
-	float enemyMovementSpeed = 0.001f; // Adjust the speed as needed
-	bool isEnemyMoving = false;
-	glfwSetCursorPosCallback(window, cursor_position_callback);
+
+
 	glfwSetFramebufferSizeCallback(window, window_callback);
 
+	bool isPlayerAttacking = false;
+	bool collisionDetected = false;
 
 	// Check if the window was closed
 	while (!glfwWindowShouldClose(window))
@@ -386,7 +371,7 @@ int main(void)
 		lastFrameTime = currentFrameTime;
 
 		// Check for input
-		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS && collisionDetected == false)
 			playerPos.x += playerSpeed;
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 			playerPos.x -= playerSpeed;
@@ -396,9 +381,11 @@ int main(void)
 			isJumping = true;
 		}
 		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-			// Start moving the enemy when 'E' is pressed
-			enemyPosition += enemyMovementDirection * enemyMovementSpeed;
-			isEnemyMoving = true;
+			if (collisionDetected == false) {
+				// Start moving the enemy when 'E' is pressed
+				enemyPosition += enemyMovementDirection * enemyMovementSpeed;
+				isEnemyMoving = true;
+			}
 		}
 		else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
 			// Stop moving the enemy when 'E' is released
@@ -407,9 +394,11 @@ int main(void)
 		// Update the enemy's AABB to the new world space position
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			targetSwordAngle = glm::radians(-540.0f); // Desired target angle when 'A' is pressed
+			isPlayerAttacking = true;
 		}
 		else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE) {
 			targetSwordAngle = 0.0f; // Back to initial position
+			isPlayerAttacking = false;
 		}
 
 		// Update currentSwordAngle towards targetSwordAngle smoothly
@@ -430,7 +419,7 @@ int main(void)
 			playerPos.y += playerVelocityY; // Update player's vertical position
 			playerVelocityY -= gravity; // Apply gravity to vertical velocity
 		}
-	
+
 		// Simulate ground collision
 		if (playerPos.y < 0.0f) // Assuming ground is at y = 0.0
 		{
@@ -444,13 +433,30 @@ int main(void)
 		transPlayer = glm::translate(transPlayer, playerPos);
 		transPlayer = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
 
-		transSword = glm::mat4(1.0f);
-		transSword = glm::translate(transSword, playerPos + swordOffset); // Position sword relative to player
-		transSword = glm::translate(transSword, pivotPoint); // Move pivot to base of the sword
+		//glm::vec3 SwordPos (playerPos.x + swordOffset.x, 0.5f, 0.0f);
+		glm::vec3 SwordPos(playerPos.x + swordOffset.x - 0.05, playerPos.y + swordOffset.y - 0.15f, 0.0f); // collision
+		std::cout << "Sword Position: ("
+			<< SwordPos.x << ", "
+			<< SwordPos.y << ", "
+			<< SwordPos.z << ")" << std::endl;
+		std::cout << std::endl;
+		transSword = glm::translate(glm::mat4(1.0f), playerPos + swordOffset); // Position sword relative to player
+		transSword = glm::translate(transSword, pivotPoint); // Move pivot to the base of the sword
 		transSword = glm::rotate(transSword, currentSwordAngle, glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around the base
-		transSword = glm::translate(transSword, -pivotPoint); // Move pivot back to original position
+		transSword = glm::translate(transSword, -pivotPoint); // Move pivot back to the original position
 		transSword = glm::scale(transSword, glm::vec3(0.5, 0.5, 0.5)); // Scale if necessary
 
+
+		glm::vec3 enemyMinWorld = enemyMin + enemyPosition;
+		glm::vec3 enemyMaxWorld = enemyMax + enemyPosition;
+
+		glm::vec4 EnemyPosCol(enemyMinWorld.x + 0.2f, enemyMaxWorld.x + 0.2f, enemyMinWorld.y, enemyMaxWorld.y);
+		std::cout << "Enemy Position: ("
+			<< EnemyPosCol.x << ", "
+			<< EnemyPosCol.y << ", "
+			<< EnemyPosCol.z << ", "
+			<< EnemyPosCol.w << ")" << std::endl;
+		glm::mat4 transEnemy(1.0f);
 		transEnemy = glm::mat4(1.0f);
 		transEnemy = glm::scale(transEnemy, glm::vec3(sx, sy, sz));
 		transEnemy = glm::translate(transEnemy, enemyPosition);
@@ -480,49 +486,20 @@ int main(void)
 		glBindVertexArray(vaoS);
 		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
-		//apply the transform for each point of the sword
-		size_t swordVertexCount = 8; // Number of vertices in the sword array (two rectangles with four vertices each)
-		// Apply transformation to sword vertices array
-		size_t enemyVertexCount = 4;
-		 transformPoints(transSword, verticesSword, swordVertexCount);
-		 transformPoints(transEnemy, verticesEnemy, enemyVertexCount);
-		 glm::vec3 enemyMinWorld = enemyMin + enemyPosition;
-		 glm::vec3 enemyMaxWorld = enemyMax + enemyPosition;
-		 //for (size_t i = 0; i < enemyVertexCount; ++i) {
-			// std::cout << "Enemy Vertex " << i << ": ("
-			//	 << verticesEnemy[i * 3] << ", "     // X coordinate
-			//	 << verticesEnemy[i * 3 + 1] << ", " // Y coordinate
-			//	 << verticesEnemy[i * 3 + 2] << ")"  // Z coordinate
-			//	 << std::endl;
-		 //}
-		/* std::cout << "Enemy AABB minWorld: ("
-			 << enemyMinWorld.x << ", "
-			 << enemyMinWorld.y << ", "
-			 << enemyMinWorld.z << ")" << std::endl;
-
-		 std::cout << "Enemy AABB maxWorld: ("
-			 << enemyMaxWorld.x << ", "
-			 << enemyMaxWorld.y << ", "
-			 << enemyMaxWorld.z << ")" << std::endl;*/
 		// Check for collision
-		bool collisionDetected = false;
-		for (int i = 0; i < swordVertexCount; ++i) {
-			// Create a glm::vec3 from the current set of floats
-			glm::vec3 point(verticesSword[i * 3], verticesSword[i * 3 + 1], verticesSword[i * 3 + 2]);
-			/*std::cout << "Checking point: ("
-				<< point.x << ", "
-				<< point.y << ", "
-				<< point.z << ")" << std::endl;*/
-			if (pointInsideAABB(point, enemyMinWorld, enemyMaxWorld)) {
-				std::cout << "Point inside!!" << std::endl;
-				/*collisionDetected = true;
-				break;*/
-			}
+		if (SwordPos.x >= EnemyPosCol.x && SwordPos.x <= EnemyPosCol.y && SwordPos.y >= EnemyPosCol.z && SwordPos.y <= EnemyPosCol.w) {
+			collisionDetected = true;
 		}
-		if(collisionDetected == true)
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
-	} 
-	
+		else {
+			collisionDetected = false;
+		}
+		//if (collisionDetected && isPlayerAttacking) {
+		if (collisionDetected && isPlayerAttacking == true) {
+			enemyPosition.x += 0.10f;
+			collisionDetected = false;
+		}
+	}
+
 	// Cleanup
 	glDeleteBuffers(1, &vboM);
 	glDeleteBuffers(1, &vboP);
@@ -546,5 +523,4 @@ int main(void)
 
 	return 0;
 }
-
 

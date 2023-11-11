@@ -2,9 +2,7 @@
           1 file(s) copied.
           1 file(s) copied.
   main.cpp
-C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\resurse facultate\repos\Proiect-ACG\Project_ACG\main.cpp(33,17): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\resurse facultate\repos\Proiect-ACG\Project_ACG\main.cpp(417,44): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\resurse facultate\repos\Proiect-ACG\Project_ACG\main.cpp(422,44): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\resurse facultate\repos\Proiect-ACG\Project_ACG\main.cpp(509,21): warning C4018: '<': signed/unsigned mismatch
-  LINK : Debug\ACG_Project.exe not found or not built by the last incremental link; performing full link
-  lab_TGIP_1.vcxproj -> C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\resurse facultate\repos\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Project_ACG\main.cpp(33,17): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Project_ACG\main.cpp(406,44): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Project_ACG\main.cpp(411,44): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+  lab_TGIP_1.vcxproj -> C:\Users\Andy\Documents\GitHub\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe

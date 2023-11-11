@@ -4,3 +4,4 @@ C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\repos\Proiect-ACG\Project
 C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
 D:\Materii\cursuri\GITHUB\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
 C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\resurse facultate\repos\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Project_ACG\Debug\ACG_Project.exe
