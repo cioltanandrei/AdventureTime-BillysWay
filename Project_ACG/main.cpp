@@ -21,6 +21,7 @@ GLFWwindow* window;
 const int width = 1080, height = 1920;
 //scaling coord for mount
 float sx = 1.0f, sy = 1.0f, sz = 0.0f;
+
 // Player position
 glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 0.0f);
 float playerSpeed = 0.001f;
@@ -31,7 +32,8 @@ bool isJumping = false;
 const float jumpStrength = 0.01f;
 //player size
 int playerSizeX = 0.2;
-//Enemy 
+
+//Enemy position
 glm::vec3 enemyPosition = glm::vec3(0.0f, 0.0f, 0.0f); // Starting position
 glm::vec3 enemyMovementDirection = glm::vec3(-1.0f, 0.0f, 0.0f); // Direction to the left
 float enemyMovementSpeed = 0.001f; // Adjust the speed as needed
@@ -264,10 +266,10 @@ int main(void)
 	// Define the indices for the lower right rectangle
 	GLuint indicesEnemy[] = { 0, 1, 2, 0, 2, 3 };
 
-	// AABB for the enemy
+	// Collision for the enemy
 	glm::vec3 enemyMin(0.6f, -0.6f, 0.0f); // Bottom-left vertex
 	glm::vec3 enemyMax(0.8f, -0.4f, 0.0f); // Top-right vertex
-	bool pointInsideAABB(glm::vec3 point, glm::vec3 aabbMin, glm::vec3 aabbMax);
+	
 	// Transform sword vertices
 	glm::mat4 transSword(1.0f);
 
@@ -382,7 +384,7 @@ int main(void)
 			// Stop moving the enemy when 'E' is released
 			isEnemyMoving = false;
 		}*/
-		// Update the enemy's AABB to the new world space position
+		
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			targetSwordAngle = glm::radians(-540.0f); // Desired target angle when 'A' is pressed
 			isPlayerAttacking = true;
@@ -424,8 +426,12 @@ int main(void)
 		transPlayer = glm::translate(transPlayer, playerPos);
 		transPlayer = glm::scale(transPlayer, glm::vec3(sx, sy, sz));
 
-		//glm::vec3 SwordPos (playerPos.x + swordOffset.x, 0.5f, 0.0f);
-		glm::vec3 SwordPos(playerPos.x + swordOffset.x - 0.05, playerPos.y + swordOffset.y - 0.15f, 0.0f); // collision
+		// SwordPos is a vector position("Sword box"), which we will need for the detection of collision, it will receive the actual "state" of Sword(whole) + Player
+		// SwordPos -> needed for the translation of the sword. The sword is attached to the player,
+		// Hard Coded: For the first coordinate of SP x: we substract -0.05f so that the collision detection to be closer
+		// Hard Coded: For the second coordinate of SP y: we substract -0.15f in order for collision detection to be recognized, 
+		//it will get to -0.5f so that it will be between the bounds of y's coordinates of the enemy, the pivot's y's coordinate was -0.7f + -> out of bounds 
+		glm::vec3 SwordPos(playerPos.x + swordOffset.x - 0.05f, playerPos.y + swordOffset.y - 0.15f, 0.0f);  
 		std::cout << "Sword Position: ("
 			<< SwordPos.x << ", "
 			<< SwordPos.y << ", "
@@ -438,8 +444,14 @@ int main(void)
 		transSword = glm::scale(transSword, glm::vec3(0.5, 0.5, 0.5)); // Scale if necessary
 
 
-		glm::vec3 enemyMinWorld = enemyMin + enemyPosition;
-		glm::vec3 enemyMaxWorld = enemyMax + enemyPosition;
+		glm::vec3 enemyMinWorld = enemyMin + enemyPosition; // actual position of the enemy on the lower bound (bottom-left vertex)
+		glm::vec3 enemyMaxWorld = enemyMax + enemyPosition; // actual position of the enemy on the upper bound (Top-right vertex)
+
+		// EnemyPosCol is a vector position("Enemy box"), which we will need for the detection of collision, it will receive the actual "state" of Enemy
+		// EnemyPosCol -> needed for the translation of the enemy. 
+		// EnemyPosCol -> vec4 : It has 4 coordinates (x-> EMinW.x, y-> EMaxW.x, z-> EMinW.y, w-> EMaxW.y)
+		// Hard Coded: For the first coordinate of EPC x, "on x translation": we add +0.2f so that the enemy "shouldn't appear on the left side compared to the player, roughly", because of the player's boundary
+		// Hard Coded: For the second coordinate of EPC y, "on x translation": same reason as above
 
 		glm::vec4 EnemyPosCol(enemyMinWorld.x + 0.2f, enemyMaxWorld.x + 0.2f, enemyMinWorld.y, enemyMaxWorld.y);
 		std::cout << "Enemy Position: ("
@@ -478,6 +490,7 @@ int main(void)
 		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
 		// Check for collision
+		 // Check if swords coordinates are inside the bounds of the enemy: sword.x is between (EMinW.x, EMaxW.x) && sword.y is between (EMinW.y, EMaxW.y)
 		if (SwordPos.x >= EnemyPosCol.x && SwordPos.x <= EnemyPosCol.y && SwordPos.y >= EnemyPosCol.z && SwordPos.y <= EnemyPosCol.w) {
 			collisionDetected = true;
 		}
