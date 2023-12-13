@@ -44,12 +44,12 @@ void Camera::keyboardMoveBack(float cameraSpeed)
 
 void Camera::keyboardMoveLeft(float cameraSpeed)
 {
-	//task
+	cameraPosition -= cameraRight * cameraSpeed;
 }
 
 void Camera::keyboardMoveRight(float cameraSpeed)
 {
-	//task
+	cameraPosition += cameraRight * cameraSpeed;
 }
 
 void Camera::keyboardMoveUp(float cameraSpeed)
