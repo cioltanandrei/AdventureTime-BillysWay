@@ -4,6 +4,7 @@
 #include "Model Loading\mesh.h"
 #include "Model Loading\texture.h"
 #include "Model Loading\meshLoaderObj.h"
+#include <format>
 
 void processKeyboardInput ();
 
@@ -23,6 +24,7 @@ int main()
 	//building and compiling shader program
 	Shader shader("Shaders/vertex_shader.glsl", "Shaders/fragment_shader.glsl");
 	Shader sunShader("Shaders/sun_vertex_shader.glsl", "Shaders/sun_fragment_shader.glsl");
+	Shader skyboxShader("Shaders/skybox_vertex_shader.glsl", "Shaders/skybox_fragment_shader.glsl");
 
 	//Textures
 	GLuint tex = loadBMP("Resources/Textures/wood.bmp");
@@ -73,6 +75,8 @@ int main()
 	textures3[0].type = "texture_diffuse";
 
 
+
+
 	Mesh mesh(vert, ind, textures3);
 
 	// Create Obj files - easier :)
@@ -81,6 +85,18 @@ int main()
 	Mesh sun = loader.loadObj("Resources/Models/sphere.obj");
 	Mesh box = loader.loadObj("Resources/Models/cube.obj", textures);
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
+	Mesh skybox = loader.loadObj("Resources/Models/cube.obj");
+	//declare a vector of faces
+	std::vector<std::string> faces
+	{
+		"Resources/Textures/skybox/right.jpg",
+		"Resources/Textures/skybox/left.jpg",
+		"Resources/Textures/skybox/top.jpg",
+		"Resources/Textures/skybox/bottom.jpg",
+		"Resources/Textures/skybox/front.jpg",
+		"Resources/Textures/skybox/back.jpg"
+	};
+	unsigned int cubemapTexture = loadCubemap(faces);
 
 	//check if we close the window or press the escape button
 	while (!window.isPressed(GLFW_KEY_ESCAPE) &&
@@ -98,6 +114,7 @@ int main()
 		{
 			std::cout << "Pressing mouse button" << std::endl;
 		}
+
 		 //// Code for the light ////
 
 		sunShader.use();
@@ -145,6 +162,8 @@ int main()
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 
 		plane.draw(shader);
+
+
 
 		window.update();
 	}

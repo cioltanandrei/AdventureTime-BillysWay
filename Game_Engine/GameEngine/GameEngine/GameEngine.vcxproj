@@ -126,6 +126,7 @@
     <ClCompile Include="Model Loading\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\..\..\..\Downloads\stb_image.h" />
     <ClInclude Include="Camera\camera.h" />
     <ClInclude Include="Graphics\window.h" />
     <ClInclude Include="Model Loading\meshLoaderObj.h" />
