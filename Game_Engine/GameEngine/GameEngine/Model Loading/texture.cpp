@@ -1,7 +1,8 @@
 #include "texture.h"
 #include <iostream>
-#include <vector>
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
 
 GLuint loadBMP(const char * imagepath) {
 
@@ -70,9 +71,9 @@ GLuint loadBMP(const char * imagepath) {
 	// Return the ID of the texture
 	return textureID;
 }
-unsigned int loadCubemap(std::vector<std::string> faces)
+GLuint loadCubemap(vector<string> faces)
 {
-	unsigned int textureID;
+	GLuint textureID;
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
@@ -89,7 +90,7 @@ unsigned int loadCubemap(std::vector<std::string> faces)
 		}
 		else
 		{
-			std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
+			cout << "Cubemap tex failed to load at path: " << faces[i] << endl;
 			stbi_image_free(data);
 		}
 	}

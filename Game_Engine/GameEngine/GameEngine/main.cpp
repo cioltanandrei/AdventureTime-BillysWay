@@ -31,6 +31,19 @@ int main()
 	GLuint tex2 = loadBMP("Resources/Textures/rock.bmp");
 	GLuint tex3 = loadBMP("Resources/Textures/orange.bmp");
 
+	//declare a vector of faces
+	std::vector<std::string> faces
+	{
+		"Resources/Textures/right.bmp",
+		"Resources/Textures/left.bmp",
+		"Resources/Textures/top.bmp",
+		"Resources/Textures/bottom.bmp",
+		"Resources/Textures/front.bmp",
+		"Resources/Textures/back.bmp"
+	};
+
+	GLuint cubemapTexture = loadCubemap(faces);
+	
 	glEnable(GL_DEPTH_TEST);
 
 	//Test custom mesh loading
@@ -74,10 +87,14 @@ int main()
 	textures3[0].id = tex3;
 	textures3[0].type = "texture_diffuse";
 
-
+	std::vector<Texture> texturesCubeMap;
+	texturesCubeMap.push_back(Texture());
+	texturesCubeMap[0].id = cubemapTexture;
+	//texturesCubeMap[0].type = "texture_diffuse";
 
 
 	Mesh mesh(vert, ind, textures3);
+
 
 	// Create Obj files - easier :)
 	// we can add here our textures :)
@@ -85,18 +102,8 @@ int main()
 	Mesh sun = loader.loadObj("Resources/Models/sphere.obj");
 	Mesh box = loader.loadObj("Resources/Models/cube.obj", textures);
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
-	Mesh skybox = loader.loadObj("Resources/Models/cube.obj");
-	//declare a vector of faces
-	std::vector<std::string> faces
-	{
-		"Resources/Textures/skybox/right.jpg",
-		"Resources/Textures/skybox/left.jpg",
-		"Resources/Textures/skybox/top.jpg",
-		"Resources/Textures/skybox/bottom.jpg",
-		"Resources/Textures/skybox/front.jpg",
-		"Resources/Textures/skybox/back.jpg"
-	};
-	unsigned int cubemapTexture = loadCubemap(faces);
+	Mesh skybox = loader.loadObj("Resources/Models/cube.obj", texturesCubeMap);
+	
 
 	//check if we close the window or press the escape button
 	while (!window.isPressed(GLFW_KEY_ESCAPE) &&
@@ -163,7 +170,31 @@ int main()
 
 		plane.draw(shader);
 
+		/// SkyBox OBJ file ///
 
+		skyboxShader.use();
+
+		GLuint MatrixID3 = glGetUniformLocation(skyboxShader.getId(), "MVP");
+		GLuint ModelMatrixID2 = glGetUniformLocation(skyboxShader.getId(), "model");
+
+		//glDepthMask(GL_FALSE);
+
+		ModelMatrix = glm::mat4(1.0);
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(5.0f, -20.0f, 0.0f));
+
+		// ... set view and projection matrix
+		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+		glUniformMatrix4fv(MatrixID3, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(ModelMatrixID2, 1, GL_FALSE, &ModelMatrix[0][0]);
+
+		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+
+		skybox.draw(skyboxShader);
+
+		glDepthMask(GL_TRUE);
+		// ... draw rest of the scene
 
 		window.update();
 	}
