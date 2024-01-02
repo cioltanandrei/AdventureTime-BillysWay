@@ -6,7 +6,7 @@
 #include "Model Loading\meshLoaderObj.h"
 #include <format>
 
-void processKeyboardInput ();
+void processKeyboardInput();
 
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
@@ -34,16 +34,16 @@ int main()
 	//declare a vector of faces
 	std::vector<std::string> faces
 	{
-		"Resources/Textures/right.bmp",
-		"Resources/Textures/left.bmp",
-		"Resources/Textures/top.bmp",
-		"Resources/Textures/bottom.bmp",
-		"Resources/Textures/front.bmp",
-		"Resources/Textures/back.bmp"
+		"Resources/Textures/right.jpg",
+		"Resources/Textures/left.jpg",
+		"Resources/Textures/top.jpg",
+		"Resources/Textures/bottom.jpg",
+		"Resources/Textures/front.jpg",
+		"Resources/Textures/back.jpg"
 	};
 
 	GLuint cubemapTexture = loadCubemap(faces);
-	
+
 	glEnable(GL_DEPTH_TEST);
 
 	//Test custom mesh loading
@@ -69,7 +69,7 @@ int main()
 	vert[2].normals = glm::normalize(glm::cross(vert[3].pos - vert[2].pos, vert[1].pos - vert[2].pos));
 	vert[3].normals = glm::normalize(glm::cross(vert[0].pos - vert[3].pos, vert[2].pos - vert[3].pos));
 
-	std::vector<int> ind = { 0, 1, 3,   
+	std::vector<int> ind = { 0, 1, 3,
 		1, 2, 3 };
 
 	std::vector<Texture> textures;
@@ -90,7 +90,7 @@ int main()
 	std::vector<Texture> texturesCubeMap;
 	texturesCubeMap.push_back(Texture());
 	texturesCubeMap[0].id = cubemapTexture;
-	//texturesCubeMap[0].type = "texture_diffuse";
+	texturesCubeMap[0].type = "texture_diffuse";
 
 
 	Mesh mesh(vert, ind, textures3);
@@ -100,10 +100,10 @@ int main()
 	// we can add here our textures :)
 	MeshLoaderObj loader;
 	Mesh sun = loader.loadObj("Resources/Models/sphere.obj");
-	Mesh box = loader.loadObj("Resources/Models/cube.obj", textures);
+	Mesh box = loader.loadObj("Resources/Models/cube.obj", texturesCubeMap);
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
 	Mesh skybox = loader.loadObj("Resources/Models/cube.obj", texturesCubeMap);
-	
+
 
 	//check if we close the window or press the escape button
 	while (!window.isPressed(GLFW_KEY_ESCAPE) &&
@@ -122,9 +122,9 @@ int main()
 			std::cout << "Pressing mouse button" << std::endl;
 		}
 
-		 //// Code for the light ////
+		//// Code for the light ////
 
-		sunShader.use();
+	   sunShader.use();
 
 		glm::mat4 ProjectionMatrix = glm::perspective(90.0f, window.getWidth() * 1.0f / window.getHeight(), 0.1f, 10000.0f);
 		glm::mat4 ViewMatrix = glm::lookAt(camera.getCameraPosition(), camera.getCameraPosition() + camera.getCameraViewDirection(), camera.getCameraUp());
@@ -142,59 +142,52 @@ int main()
 
 		//// End code for the light ////
 
+		///// Test plane Obj file //////
+
+		
+
 		shader.use();
-
-		///// Test Obj files for box ////
-
 		GLuint MatrixID2 = glGetUniformLocation(shader.getId(), "MVP");
 		GLuint ModelMatrixID = glGetUniformLocation(shader.getId(), "model");
-
 		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -20.0f, 0.0f));
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
-
-		box.draw(shader);
-
-		///// Test plane Obj file //////
-
-		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -20.0f, 0.0f));
-		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-
 		plane.draw(shader);
 
-		/// SkyBox OBJ file ///
+		
+
+		///// Test Obj files for box ////
 
 		skyboxShader.use();
 
-		GLuint MatrixID3 = glGetUniformLocation(skyboxShader.getId(), "MVP");
-		GLuint ModelMatrixID2 = glGetUniformLocation(skyboxShader.getId(), "model");
-
-		//glDepthMask(GL_FALSE);
-
 		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(5.0f, -20.0f, 0.0f));
-
-		// ... set view and projection matrix
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-		glUniformMatrix4fv(MatrixID3, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(ModelMatrixID2, 1, GL_FALSE, &ModelMatrix[0][0]);
+		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+		ViewMatrix = glm::mat4(glm::mat3(camera.getViewMatrix())); // remove translation from the view matrix
+		glUniformMatrix4fv(glGetUniformLocation(skyboxShader.getId(), "view"), 1, GL_FALSE, &ViewMatrix[0][0]);
+		//glUniformMatrix4fv(glGetUniformLocation(skyboxShader.getId(), "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0]);
+		skybox.draw(shader);
 
-		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+		
 
-		skybox.draw(skyboxShader);
+		//// Test skybox ////
+		//glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+		//skyboxShader.use();
+		
+		//glUniformMatrix4fv(glGetUniformLocation(skyboxShader.getId(), "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0]);
+		// skybox cube
+		//skybox.setup();
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+		//skybox.draw(skyboxShader);
+		//glDepthFunc(GL_LESS); // set depth function back to default
 
-		glDepthMask(GL_TRUE);
-		// ... draw rest of the scene
 
 		window.update();
 	}
