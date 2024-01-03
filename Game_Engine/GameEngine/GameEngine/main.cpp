@@ -34,17 +34,16 @@ int main()
 	//declare a vector of faces
 	std::vector<std::string> faces
 	{
-		"Resources/Textures/right.bmp",
-		"Resources/Textures/left.bmp",
-		"Resources/Textures/top.bmp",
-		"Resources/Textures/bottom.bmp",
-		"Resources/Textures/front.bmp",
-		"Resources/Textures/back.bmp"
+		"Resources/Textures/right.jpg",
+		"Resources/Textures/left.jpg",
+		"Resources/Textures/top.jpg",
+		"Resources/Textures/bottom.jpg",
+		"Resources/Textures/front.jpg",
+		"Resources/Textures/back.jpg"
 	};
 
-	GLuint cubemapTexture = loadCubemap(faces);
+	GLuint cubemapTexture = loadCubemap(faces); // Initialize the cubemap texture
 	
-	glEnable(GL_DEPTH_TEST);
 
 	//Test custom mesh loading
 	std::vector<Vertex> vert;
@@ -90,7 +89,7 @@ int main()
 	std::vector<Texture> texturesCubeMap;
 	texturesCubeMap.push_back(Texture());
 	texturesCubeMap[0].id = cubemapTexture;
-	//texturesCubeMap[0].type = "texture_diffuse";
+	texturesCubeMap[0].type = "texture_diffuse";
 
 
 	Mesh mesh(vert, ind, textures3);
@@ -102,13 +101,19 @@ int main()
 	Mesh sun = loader.loadObj("Resources/Models/sphere.obj");
 	Mesh box = loader.loadObj("Resources/Models/cube.obj", textures);
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
-	Mesh skybox = loader.loadObj("Resources/Models/cube.obj", texturesCubeMap);
+	Mesh skybox = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
 	
+	// Render the skybox cube
+	skybox.setup();
 
 	//check if we close the window or press the escape button
 	while (!window.isPressed(GLFW_KEY_ESCAPE) &&
 		glfwWindowShouldClose(window.getWindow()) == 0)
 	{
+		
+		// Clear the color and depth buffers at the beginning of each frame
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		window.clear();
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -122,35 +127,72 @@ int main()
 			std::cout << "Pressing mouse button" << std::endl;
 		}
 
-		 //// Code for the light ////
-
-		sunShader.use();
-
+		// Set up view and projection matrices (common for all objects)
 		glm::mat4 ProjectionMatrix = glm::perspective(90.0f, window.getWidth() * 1.0f / window.getHeight(), 0.1f, 10000.0f);
 		glm::mat4 ViewMatrix = glm::lookAt(camera.getCameraPosition(), camera.getCameraPosition() + camera.getCameraViewDirection(), camera.getCameraUp());
+		
+		// Enable depth testing
+		glEnable(GL_DEPTH_TEST);
+
+		// Disable backface culling for rendering the skybox
+		glDisable(GL_CULL_FACE);
+
+		// Render the skybox first
+		skyboxShader.use();
+
+		// Disable depth writing for skybox rendering
+		glDepthMask(GL_FALSE);
+		glDepthFunc(GL_LEQUAL); // Use this for rendering the skybox
+
+		
+		// Remove translation from the view matrix
+		glm::mat4 skyboxViewMatrix = glm::mat4(glm::mat3(ViewMatrix));
+
+
+		// Set the projection matrix
+		GLuint projectionLoc = glGetUniformLocation(skyboxShader.getId(), "projection");
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+
+		// Set the modified view matrix for the skybox
+			GLuint viewLoc = glGetUniformLocation(skyboxShader.getId(), "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(skyboxViewMatrix));
+
+
+		//skybox.draw(skyboxShader);
+		skybox.draw2(skyboxShader, cubemapTexture);
+
+		// Re-enable depth writing for other objects
+		glDepthMask(GL_TRUE);
+
+		glDepthFunc(GL_LESS); // Restore the default depth function
+
+		// Re-enable backface culling for other objects
+		glEnable(GL_CULL_FACE);
+
+		// Render the light source (sun)
+		sunShader.use();
 
 		GLuint MatrixID = glGetUniformLocation(sunShader.getId(), "MVP");
 
-		//Test for one Obj loading = light source
-
-		glm::mat4 ModelMatrix = glm::mat4(1.0);
+		glm::mat4 ModelMatrix = glm::mat4(1.0); // Define ModelMatrix here
 		ModelMatrix = glm::translate(ModelMatrix, lightPos);
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
 		sun.draw(sunShader);
 
-		//// End code for the light ////
+		// Disable backface culling when you want to see the inside of the cube
+		glDisable(GL_CULL_FACE);
 
+		// Render the wooden cube using the 'shader'
 		shader.use();
-
-		///// Test Obj files for box ////
 
 		GLuint MatrixID2 = glGetUniformLocation(shader.getId(), "MVP");
 		GLuint ModelMatrixID = glGetUniformLocation(shader.getId(), "model");
 
-		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+		// Render the wooden cube
+		ModelMatrix = glm::mat4(1.0); // Define ModelMatrix here
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f)); // Adjust the position
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
@@ -158,45 +200,21 @@ int main()
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
+		// Render the wooden cube mesh
 		box.draw(shader);
 
-		///// Test plane Obj file //////
-
-		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -20.0f, 0.0f));
+		// Render the plane using the 'shader'
+		ModelMatrix = glm::mat4(1.0); // Define ModelMatrix here
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -20.0f, 0.0f)); // Adjust the position
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 
+		// Render the plane mesh
 		plane.draw(shader);
 
-		/// SkyBox OBJ file ///
-
-		skyboxShader.use();
-
-		GLuint MatrixID3 = glGetUniformLocation(skyboxShader.getId(), "MVP");
-		GLuint ModelMatrixID2 = glGetUniformLocation(skyboxShader.getId(), "model");
-
-		//glDepthMask(GL_FALSE);
-
-		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(5.0f, -20.0f, 0.0f));
-
-		// ... set view and projection matrix
-		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-		glUniformMatrix4fv(MatrixID3, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(ModelMatrixID2, 1, GL_FALSE, &ModelMatrix[0][0]);
-
-		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(glGetUniformLocation(skyboxShader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
-
-		skybox.draw(skyboxShader);
-
-		glDepthMask(GL_TRUE);
-		// ... draw rest of the scene
-
 		window.update();
+		
 	}
 }
 

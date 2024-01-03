@@ -80,6 +80,28 @@ void Mesh::setup()
 	glBindVertexArray(0);
 }
 
+void Mesh::draw2(Shader shader, GLuint cubemapTexture)
+{
+	// Use the shader program
+	shader.use();
+
+	// Bind the cubemap texture to texture unit 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+
+	// Set the samplerCube uniform to texture unit 0
+	glUniform1i(glGetUniformLocation(shader.getId(), "skybox"), 0);
+
+	// Draw mesh
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+	// Unbind the texture and set active texture back to default
+	glActiveTexture(GL_TEXTURE0);
+}
+
+
 //no textures yet
 void Mesh::setup2()
 {

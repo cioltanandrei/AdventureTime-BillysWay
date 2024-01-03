@@ -71,7 +71,11 @@ void Camera::rotateOx(float angle)
 
 void Camera::rotateOy (float angle)
 {
-	//task
+
+	cameraViewDirection = glm::normalize(glm::vec3(glm::rotate(glm::mat4(1.0f), angle, cameraUp) * glm::vec4(cameraViewDirection, 1)));
+	cameraRight = glm::normalize(glm::cross(cameraViewDirection, cameraUp));
+	cameraUp = glm::cross(cameraRight, cameraViewDirection);
+
 }
 
 glm::mat4 Camera::getViewMatrix()

@@ -1,6 +1,4 @@
-﻿  texture.cpp
-  main.cpp
+﻿  main.cpp
   The contents of <format> are available only with C++20 or later.
-D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(113,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
+D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(118,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   GameEngine.vcxproj -> D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe

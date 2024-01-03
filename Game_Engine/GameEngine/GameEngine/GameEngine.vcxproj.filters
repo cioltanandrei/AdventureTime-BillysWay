@@ -59,12 +59,17 @@
     <ClInclude Include="Model Loading\stringTokenizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Model Loading\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\vertex_shader.glsl" />
     <None Include="Shaders\fragment_shader.glsl" />
     <None Include="Shaders\sun_fragment_shader.glsl" />
     <None Include="Shaders\sun_vertex_shader.glsl" />
+    <None Include="Shaders\skybox_fragment_shader.glsl" />
+    <None Include="Shaders\skybox_vertex_shader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Textures\wood.bmp">
