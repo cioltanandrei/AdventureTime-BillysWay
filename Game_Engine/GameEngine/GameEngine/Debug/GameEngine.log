@@ -1,4 +1,4 @@
 ﻿  main.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\format(42): warning STL4038: The contents of <format> are available only with C++20 or later.
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(113,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  GameEngine.vcxproj -> D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\format(43): warning STL4038: The contents of <format> are available only with C++20 or later.
+C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(113,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  GameEngine.vcxproj -> C:\Users\stefa\Dropbox\My PC (LAPTOP-M4MLP922)\Desktop\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe

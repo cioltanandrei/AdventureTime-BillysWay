@@ -82,5 +82,6 @@ class Mesh
 		void setup();
 		void setup2();
 		void draw(Shader shader);
+		void draw2(Shader shader, GLuint id);
 };
 
