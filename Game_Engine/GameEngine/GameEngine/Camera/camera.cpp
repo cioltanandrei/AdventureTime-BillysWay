@@ -8,6 +8,7 @@ Camera::Camera(glm::vec3 cameraPosition)
 	this->cameraRight = glm::cross(cameraViewDirection, cameraUp);
 	this->rotationOx = 0.0f;
 	this->rotationOy = -90.0f;
+	this->planeLevelY = 5.0f;
 }
 
 Camera::Camera()
@@ -18,6 +19,7 @@ Camera::Camera()
 	this->cameraRight = glm::cross(cameraViewDirection, cameraUp);
 	this->rotationOx = 0.0f;
 	this->rotationOy = -90.0f;
+	this->planeLevelY = 5.0f;
 }
 
 Camera::Camera(glm::vec3 cameraPosition, glm::vec3 cameraViewDirection, glm::vec3 cameraUp)
@@ -35,11 +37,17 @@ Camera::~Camera()
 void Camera::keyboardMoveFront(float cameraSpeed)
 {
 	cameraPosition += cameraViewDirection * cameraSpeed;
+	//make it not go below the plane
+	if (cameraPosition.y < planeLevelY)
+		cameraPosition.y = planeLevelY;
 }
 
 void Camera::keyboardMoveBack(float cameraSpeed)
 {
 	cameraPosition -= cameraViewDirection * cameraSpeed;
+	//make it not go below the plane
+	if (cameraPosition.y < planeLevelY)
+		cameraPosition.y = planeLevelY;
 }
 
 void Camera::keyboardMoveLeft(float cameraSpeed)
@@ -55,11 +63,17 @@ void Camera::keyboardMoveRight(float cameraSpeed)
 void Camera::keyboardMoveUp(float cameraSpeed)
 {
 	cameraPosition += cameraUp * cameraSpeed;
+	//make it not go below the plane
+	if (cameraPosition.y < planeLevelY)
+		cameraPosition.y = planeLevelY;
 }
 
 void Camera::keyboardMoveDown(float cameraSpeed)
 {
 	cameraPosition -= cameraUp * cameraSpeed;
+	//make it not go below the plane
+	if (cameraPosition.y < planeLevelY)
+		cameraPosition.y = planeLevelY;
 }
 
 void Camera::rotateOx(float angle)

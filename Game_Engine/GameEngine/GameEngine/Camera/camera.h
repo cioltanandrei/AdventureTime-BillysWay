@@ -17,7 +17,7 @@ class Camera
 		//rotation - to be removed
 		float rotationOx;
 		float rotationOy;
-
+		float planeLevelY;
 	public:
 		Camera();
 		Camera(glm::vec3 cameraPosition);
