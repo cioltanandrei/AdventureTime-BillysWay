@@ -5,6 +5,13 @@
 #include "Model Loading\texture.h"
 #include "Model Loading\meshLoaderObj.h"
 #include <format>
+#include <cstdlib>
+#include <ctime>
+
+// Function to generate a random float within a given range
+float getRandomFloat(float min, float max) {
+	return min + static_cast<float>(rand()) / RAND_MAX * (max - min);
+}
 
 void processKeyboardInput();
 
@@ -36,6 +43,8 @@ int main()
 	GLuint tex6 = loadBMP("Resources/Textures/t11_Specular.bmp");
 	GLuint tex7 = loadBMP("Resources/Textures/t11_Glossiness.bmp");
 	GLuint tex8 = loadBMP("Resources/Textures/t11_Height.bmp");*/
+
+	GLuint tex9 = loadBMP("Resources/Textures/fantasy_sword.bmp");
 	
 	//declare a vector of faces
 	std::vector<std::string> faces
@@ -103,6 +112,12 @@ int main()
 	textures4[0].id = tex4;
 	textures4[0].type = "texture_diffuse";
 
+	std::vector<Texture> textures5;
+	textures5.push_back(Texture());
+	textures5[0].id = tex9;
+	textures5[0].type = "texture_diffuse";
+
+
 
 	Mesh mesh(vert, ind, textures3);
 
@@ -115,7 +130,36 @@ int main()
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
 	Mesh skybox = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
 	Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
+	Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
 	skybox.setup();
+
+
+	// Seed the random number generator
+	srand(static_cast<unsigned int>(time(nullptr)));
+
+	// Number of trees
+	int numTrees = 50;
+
+	// Range of positions
+	float minX = -500.0f;
+	float maxX = 500.0f;
+	float minY = -8.0f;
+	float maxY = -5.0f;
+	float minZ = -500.0f;
+	float maxZ = 500.0f;
+
+	// Vector to store tree positions
+	std::vector<glm::vec3> treePositions;
+
+
+	// Generate random tree positions
+	for (int i = 0; i < numTrees; ++i) {
+		float x = getRandomFloat(minX, maxX);
+		float y = getRandomFloat(minY, maxY);
+		float z = getRandomFloat(minZ, maxZ);
+		treePositions.push_back(glm::vec3(x, y, z));
+	}
+
 
 	//check if we close the window or press the escape button
 	while (!window.isPressed(GLFW_KEY_ESCAPE) &&
@@ -196,13 +240,7 @@ int main()
 		GLuint MatrixID3 = glGetUniformLocation(shader.getId(), "MVP");
 		GLuint ModelMatrixID2 = glGetUniformLocation(shader.getId(), "model");
 		ModelMatrix = glm::mat4(1.0);
-
-		// Example positions for trees
-		std::vector<glm::vec3> treePositions = {
-			glm::vec3(10.0f, -8.0f, 20.0f),
-			glm::vec3(15.0f, -8.0f, 25.0f),
-			// Add as many as you like
-		};
+		
 
 		// Draw each tree
 		for (const auto& position : treePositions)
@@ -222,7 +260,24 @@ int main()
 			tree.draw(shader); // Assuming your Mesh class has a draw method
 		}
 		
-		
+		///// Test Obj files for sword ////
+		shader.use();
+
+		GLuint MatrixID4 = glGetUniformLocation(shader.getId(), "MVP");
+		GLuint ModelMatrixID3 = glGetUniformLocation(shader.getId(), "model");
+		ModelMatrix = glm::mat4(1.0);
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, -3.0f, 0.0f));
+		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.0f));
+
+		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+		glUniformMatrix4fv(MatrixID4, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &ModelMatrix[0][0]);
+		glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &MVP[0][0]);
+		glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+
+		sword.draw(shader);
 
 		//// Test skybox ////
 		glDepthFunc(GL_LEQUAL);  // Change depth function to allow depth test pass when values are equal
