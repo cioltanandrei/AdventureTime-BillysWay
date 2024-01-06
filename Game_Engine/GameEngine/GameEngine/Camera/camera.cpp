@@ -109,5 +109,9 @@ glm::vec3 Camera::getCameraUp()
 {
 	return cameraUp;
 }
+glm::vec3 Camera::getCameraRight()
+{
+	return cameraRight;
+}
 
 

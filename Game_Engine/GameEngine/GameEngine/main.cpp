@@ -24,6 +24,16 @@ Camera camera;
 glm::vec3 lightColor = glm::vec3(1.0f);
 glm::vec3 lightPos = glm::vec3(-180.0f, 300.0f, -200.0f);
 
+const float PICKUP_DISTANCE = 10.0f;  // 5 units away
+std::vector<Mesh> sceneMeshes;
+
+bool isWithinPickupDistance(Camera& camera, Mesh& object, float pickupDistance) {
+	glm::vec3 cameraPos = camera.getCameraPosition();
+	glm::vec3 objectPos = object.getPosition();
+	float distance = glm::length(cameraPos - objectPos);
+	return distance <= pickupDistance;
+}
+
 int main()
 {
 	glClearColor(0.2f, 0.8f, 1.0f, 1.0f);
@@ -127,6 +137,7 @@ int main()
 	MeshLoaderObj loader;
 	Mesh sun = loader.loadObj("Resources/Models/sphere.obj");
 	Mesh box = loader.loadObj("Resources/Models/cube.obj", textures);
+	
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
 	Mesh skybox = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
 	Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
@@ -177,7 +188,7 @@ int main()
 		{
 			std::cout << "Pressing mouse button" << std::endl;
 		}
-
+		
 		//Code for the box
 		glm::mat4 ViewMatrix = glm::lookAt(camera.getCameraPosition(), camera.getCameraPosition() + camera.getCameraViewDirection(), camera.getCameraUp());
 		glm::mat4 ProjectionMatrix = glm::perspective(90.0f, window.getWidth() * 1.0f / window.getHeight(), 0.1f, 10000.0f);
@@ -186,19 +197,46 @@ int main()
 		GLuint ModelMatrixID = glGetUniformLocation(shader.getId(), "model");
 
 		glm::mat4 ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -8.0f, 0.0f));
-
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -8.0f, -8.0f));
+		//std::cout << box.getPosition().x << box.getPosition().y << box.getPosition().z << std::endl;
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
-
-		box.draw(shader);
+		// Add the box to your scene meshes
+		sceneMeshes.push_back(box);
+		//std::cout << "Initial Position: " << mesh.getPosition().x << ", " << mesh.getPosition().y << ", " << mesh.getPosition().z << std::endl;
+		//std::cout << "Camera Position: " << camera.getCameraPosition().x << ", " << camera.getCameraPosition().y << ", " << camera.getCameraPosition().z << std::endl;
 		//End code for the box
+		if (window.isPressed(GLFW_KEY_L)) {  // If the pickup key is pressed
+			for (Mesh& mesh : sceneMeshes) {
+				if (!mesh.getIsHeld() && isWithinPickupDistance(camera, mesh, PICKUP_DISTANCE)) {
+					glm::vec3 holdOffset(0.5f, -0.5f, -1.0f);  // Adjust as needed
+					
+					mesh.hold(holdOffset);
+					mesh.updatePositionBasedOnCamera(camera);
+					// Debugging print statements
+					//std::cout << "Picking up Mesh" << std::endl;
+					//std::cout << "Final Position: " << mesh.getPosition().x << ", " << mesh.getPosition().y << ", " << mesh.getPosition().z << std::endl;
+					//std::cout << "Offset: " << mesh.getHeldPositionOffset().x << ", " << mesh.getHeldPositionOffset().y << ", " << mesh.getHeldPositionOffset().z << std::endl;
+					//std::cout << "isHeld: " << mesh.getIsHeld() << std::endl;
+					break; // Assuming you can only pick up one object at a time
+				}
+			}
+		}
+		else if (window.isPressed(GLFW_KEY_Q)) {  // If the release key is pressed
+			for (Mesh& mesh : sceneMeshes) {
+				if (mesh.getIsHeld()) {
+					mesh.release();
+					//mesh.updatePositionBasedOnCamera(camera);
+					break; // Assuming you can only pick up one object at a time
+				}
+			}
+		}
+		box.draw(shader);
 		
-
 		//// Code for the light ////
 
 		sunShader.use();
@@ -278,6 +316,8 @@ int main()
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
 		sword.draw(shader);
+
+
 
 		//// Test skybox ////
 		glDepthFunc(GL_LEQUAL);  // Change depth function to allow depth test pass when values are equal

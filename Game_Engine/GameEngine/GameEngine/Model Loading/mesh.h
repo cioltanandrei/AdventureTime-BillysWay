@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "..\Shaders\shader.h"
+#include "..\Camera\camera.h"  // Include the Camera header
 
 struct Vertex 
 {
@@ -65,17 +66,22 @@ struct Texture
 };
 
 class Mesh
-{
+{	
 	public:
 		std::vector<Vertex> vertices;
 		std::vector<int> indices;
 		std::vector<Texture> textures;
 
+		// Variables to handle the 'held' state and position
+		bool isHeld = false;
+		glm::vec3 offsetFromCamera;
+		glm::vec3 position;
+	
 		unsigned int vao, vbo, ibo;
 
 		Mesh();	
 		Mesh(std::vector<Vertex> vertices, std::vector<int> indices, std::vector<Texture> textures);
-		Mesh(std::vector<Vertex> vertices, std::vector<int> indices);
+		Mesh(std::vector<Vertex> vertices, std::vector<int> indices, bool isHeld = false, glm::vec3 offsetFromCamera = glm::vec3(0.0f), glm::vec3 position = glm::vec3(0.0f));
 		~Mesh();
 
 		void setTextures(std::vector<Texture> textures);
@@ -83,5 +89,14 @@ class Mesh
 		void setup2();
 		void draw(Shader shader);
 		void draw2(Shader shader, GLuint id);
+		
+		// Methods to handle the 'held' state and position
+		void hold(const glm::vec3& offset);
+		void release();
+		bool getIsHeld() const;
+		glm::vec3 getHeldPositionOffset() const;
+		void setPosition(const glm::vec3& newPosition);
+		glm::vec3 getPosition() const;
+		void updatePositionBasedOnCamera(Camera& camera);  
 };
 

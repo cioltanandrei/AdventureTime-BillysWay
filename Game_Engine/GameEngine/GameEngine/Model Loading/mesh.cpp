@@ -1,14 +1,16 @@
 #include "mesh.h"
 
-Mesh::Mesh() {}
+Mesh::Mesh(){}
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices, bool isHeld, glm::vec3 offsetFromCamera, glm::vec3 position)
+	: isHeld(isHeld), offsetFromCamera(offsetFromCamera), position(position) 
 {
 	this->vertices = vertices;
 	this->indices = indices;
 
 	setup2();
 }
+
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices, std::vector<Texture> textures)
 {
@@ -18,6 +20,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices, std::vector<T
 
 	setup();
 }
+
 
 // render the mesh
 void Mesh::draw(Shader shader)
@@ -128,6 +131,46 @@ void Mesh::setTextures(std::vector<Texture> textures)
 {
 	this->textures = textures;
 	setup();
+}
+// Method to "hold" the mesh at a certain offset from the camera
+void Mesh::hold(const glm::vec3& offset) {
+	isHeld = true;
+	offsetFromCamera = offset;
+}
+
+// Method to "release" the mesh
+void Mesh::release() {
+	isHeld = false;
+}
+
+// Method to check if the mesh is held
+bool Mesh::getIsHeld() const {
+	return isHeld;
+}
+
+// Method to get the offset from the camera when the mesh is held
+glm::vec3 Mesh::getHeldPositionOffset() const {
+	return offsetFromCamera;
+}
+
+// Method to set the position of the mesh
+void Mesh::setPosition(const glm::vec3& newPosition) {
+	position = newPosition;
+}
+
+// Method to get the current position of the mesh
+glm::vec3 Mesh::getPosition() const {
+	return position;
+}
+
+void Mesh::updatePositionBasedOnCamera(Camera& camera) {
+	if (isHeld) {
+		position = camera.getCameraPosition()
+			+ camera.getCameraViewDirection() * offsetFromCamera.z
+			+ camera.getCameraUp() * offsetFromCamera.y
+			+ camera.getCameraRight() * offsetFromCamera.x;
+		// Here you can set the orientation if needed
+	}
 }
 
 Mesh::~Mesh() {}
