@@ -2,8 +2,8 @@
 
 Mesh::Mesh(){}
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices, bool isHeld, glm::vec3 offsetFromCamera, glm::vec3 position)
-	: isHeld(isHeld), offsetFromCamera(offsetFromCamera), position(position) 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices, bool isHeld, bool shouldBeDrawn, glm::vec3 offsetFromCamera, glm::vec3 position)
+	: isHeld(isHeld), shouldBeDrawn(shouldBeDrawn), offsetFromCamera(offsetFromCamera), position(position)
 {
 	this->vertices = vertices;
 	this->indices = indices;
@@ -133,9 +133,8 @@ void Mesh::setTextures(std::vector<Texture> textures)
 	setup();
 }
 // Method to "hold" the mesh at a certain offset from the camera
-void Mesh::hold(const glm::vec3& offset) {
+void Mesh::hold() {
 	isHeld = true;
-	offsetFromCamera = offset;
 }
 
 // Method to "release" the mesh
@@ -170,8 +169,14 @@ void Mesh::updatePositionBasedOnCamera(Camera& camera) {
 			+ camera.getCameraUp() * offsetFromCamera.y
 			+ camera.getCameraRight() * offsetFromCamera.x;
 		// Here you can set the orientation if needed
+
 	}
 }
+void Mesh::drawBool(bool state)
+{
+	shouldBeDrawn = state;
+}
+bool Mesh::isDrawable()  { return shouldBeDrawn; }
 
 Mesh::~Mesh() {}
 

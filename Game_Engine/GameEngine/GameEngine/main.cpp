@@ -24,7 +24,7 @@ Camera camera;
 glm::vec3 lightColor = glm::vec3(1.0f);
 glm::vec3 lightPos = glm::vec3(-180.0f, 300.0f, -200.0f);
 
-const float PICKUP_DISTANCE = 10.0f;  // 5 units away
+const float PICKUP_DISTANCE = 20.0f;  //  units away
 std::vector<Mesh> sceneMeshes;
 
 bool isWithinPickupDistance(Camera& camera, Mesh& object, float pickupDistance) {
@@ -189,6 +189,36 @@ int main()
 			std::cout << "Pressing mouse button" << std::endl;
 		}
 		
+		
+		sceneMeshes.push_back(box);
+		
+		//std::cout << "Initial Position: " << mesh.getPosition().x << ", " << mesh.getPosition().y << ", " << mesh.getPosition().z << std::endl;
+		//std::cout << "Camera Position: " << camera.getCameraPosition().x << ", " << camera.getCameraPosition().y << ", " << camera.getCameraPosition().z << std::endl;
+		//End code for the box
+		bool lKeyWasPressed = false;
+		bool qKeyWasPressed = false;
+		if (glfwGetKey(window.getWindow(), GLFW_KEY_L) == GLFW_PRESS && !lKeyWasPressed){  // If the pickup key is pressed
+			for (Mesh& mesh : sceneMeshes) {
+				if (!mesh.getIsHeld() && isWithinPickupDistance(camera, mesh, PICKUP_DISTANCE)) {
+					mesh.hold();
+					mesh.drawBool(false);				
+					std::cout << "Object Picked" << std::endl;
+					break; // Assuming you can only pick up one object at a time
+				}
+			}
+			lKeyWasPressed = true;
+		}
+		else if (window.isPressed(GLFW_KEY_Q)) {  // If the release key is pressed
+			for (Mesh& mesh : sceneMeshes) {
+				if (mesh.getIsHeld()) {
+					mesh.release();
+					mesh.drawBool(true);
+					std::cout << "Object Released" << std::endl;
+					break; // Assuming you can only pick up one object at a time
+				}
+			}
+			qKeyWasPressed = true;
+		}
 		//Code for the box
 		glm::mat4 ViewMatrix = glm::lookAt(camera.getCameraPosition(), camera.getCameraPosition() + camera.getCameraViewDirection(), camera.getCameraUp());
 		glm::mat4 ProjectionMatrix = glm::perspective(90.0f, window.getWidth() * 1.0f / window.getHeight(), 0.1f, 10000.0f);
@@ -197,46 +227,33 @@ int main()
 		GLuint ModelMatrixID = glGetUniformLocation(shader.getId(), "model");
 
 		glm::mat4 ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -8.0f, -8.0f));
-		//std::cout << box.getPosition().x << box.getPosition().y << box.getPosition().z << std::endl;
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-		glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
-		// Add the box to your scene meshes
-		sceneMeshes.push_back(box);
-		//std::cout << "Initial Position: " << mesh.getPosition().x << ", " << mesh.getPosition().y << ", " << mesh.getPosition().z << std::endl;
-		//std::cout << "Camera Position: " << camera.getCameraPosition().x << ", " << camera.getCameraPosition().y << ", " << camera.getCameraPosition().z << std::endl;
-		//End code for the box
-		if (window.isPressed(GLFW_KEY_L)) {  // If the pickup key is pressed
-			for (Mesh& mesh : sceneMeshes) {
-				if (!mesh.getIsHeld() && isWithinPickupDistance(camera, mesh, PICKUP_DISTANCE)) {
-					glm::vec3 holdOffset(0.5f, -0.5f, -1.0f);  // Adjust as needed
-					
-					mesh.hold(holdOffset);
-					mesh.updatePositionBasedOnCamera(camera);
-					// Debugging print statements
-					//std::cout << "Picking up Mesh" << std::endl;
-					//std::cout << "Final Position: " << mesh.getPosition().x << ", " << mesh.getPosition().y << ", " << mesh.getPosition().z << std::endl;
-					//std::cout << "Offset: " << mesh.getHeldPositionOffset().x << ", " << mesh.getHeldPositionOffset().y << ", " << mesh.getHeldPositionOffset().z << std::endl;
-					//std::cout << "isHeld: " << mesh.getIsHeld() << std::endl;
-					break; // Assuming you can only pick up one object at a time
-				}
+		for (Mesh& mesh : sceneMeshes) {
+			if (mesh.isDrawable()) {
+				//translate the box close to the camera position
+				//on the ground level
+				mesh.updatePositionBasedOnCamera(camera);
+				MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+				glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
+				glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+				glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+				glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+				glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+				mesh.draw(shader); // Draw only if the mesh should be drawn
+			}
+			else
+			{
+				ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -10000.0f, -10000.0f));
+				MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+				glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);
+				glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+				glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+				glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+				glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+				mesh.draw(shader);
 			}
 		}
-		else if (window.isPressed(GLFW_KEY_Q)) {  // If the release key is pressed
-			for (Mesh& mesh : sceneMeshes) {
-				if (mesh.getIsHeld()) {
-					mesh.release();
-					//mesh.updatePositionBasedOnCamera(camera);
-					break; // Assuming you can only pick up one object at a time
-				}
-			}
-		}
-		box.draw(shader);
-		
+
 		//// Code for the light ////
 
 		sunShader.use();
@@ -260,7 +277,7 @@ int main()
 		///// Test plane Obj file //////
 		shader.use();
 		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -8.0f, 0.0f));
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
 		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(600.0f, 600.0f, 600.0f));
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		glUniformMatrix4fv(MatrixID2, 1, GL_FALSE, &MVP[0][0]);

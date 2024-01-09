@@ -8,18 +8,18 @@ Camera::Camera(glm::vec3 cameraPosition)
 	this->cameraRight = glm::cross(cameraViewDirection, cameraUp);
 	this->rotationOx = 0.0f;
 	this->rotationOy = -90.0f;
-	this->planeLevelY = 5.0f;
+	this->planeLevelY = 2.0f;
 }
 
 Camera::Camera()
 {
-	this ->cameraPosition = glm::vec3(0.0f, 0.0f, 100.0f);
+	this ->cameraPosition = glm::vec3(0.0f, 5.0f, 100.0f);
 	this ->cameraViewDirection = glm::vec3(0.0f, 0.0f, -1.0f);
 	this ->cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->cameraRight = glm::cross(cameraViewDirection, cameraUp);
 	this->rotationOx = 0.0f;
 	this->rotationOy = -90.0f;
-	this->planeLevelY = 5.0f;
+	this->planeLevelY = 2.0f;
 }
 
 Camera::Camera(glm::vec3 cameraPosition, glm::vec3 cameraViewDirection, glm::vec3 cameraUp)
