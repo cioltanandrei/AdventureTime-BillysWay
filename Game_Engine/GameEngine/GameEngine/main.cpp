@@ -59,12 +59,19 @@ int main()
 	//declare a vector of faces
 	std::vector<std::string> faces
 	{
-		"Resources/Textures/posx.jpg",
-		"Resources/Textures/negx.jpg",
-		"Resources/Textures/posy.jpg",
-		"Resources/Textures/negy.jpg",
-		"Resources/Textures/posz.jpg",
-		"Resources/Textures/negz.jpg"
+		//"Resources/Textures/posx.jpg",
+		//"Resources/Textures/negx.jpg",
+		//"Resources/Textures/posy.jpg",
+		//"Resources/Textures/negy.jpg",
+		//"Resources/Textures/posz.jpg",
+		//"Resources/Textures/negz.jpg"
+
+		"Resources/Textures/rightF.jpg",
+		"Resources/Textures/leftF.jpg",
+		"Resources/Textures/topF.jpg",
+		"Resources/Textures/bottomF.jpg",
+		"Resources/Textures/frontF.jpg",
+		"Resources/Textures/backF.jpg"
 	};
 
 	GLuint cubemapTexture = loadCubemap(faces);
