@@ -66,12 +66,12 @@ int main()
 		//"Resources/Textures/posz.jpg",
 		//"Resources/Textures/negz.jpg"
 
-		"Resources/Textures/rightF.jpg",
-		"Resources/Textures/leftF.jpg",
-		"Resources/Textures/topF.jpg",
-		"Resources/Textures/bottomF.jpg",
-		"Resources/Textures/frontF.jpg",
-		"Resources/Textures/backF.jpg"
+		"Resources/Textures/rightF2.jpg",
+		"Resources/Textures/leftF2.jpg",
+		"Resources/Textures/topF2.jpg",
+		"Resources/Textures/bottomF2.jpg",
+		"Resources/Textures/frontF2.jpg",
+		"Resources/Textures/backF2.jpg"
 	};
 
 	GLuint cubemapTexture = loadCubemap(faces);
