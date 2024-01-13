@@ -13,14 +13,15 @@
 
 bool mainQuestCompleted = false;
 bool aliveInThisWorld = false;
-
+glm::vec2 mousePos = glm::vec2(0.0f);
+glm::vec2 lastMousePos = glm::vec2(0.0f);
 // Function to generate a random float within a given range
 float getRandomFloat(float min, float max) {
 	return min + static_cast<float>(rand()) / RAND_MAX * (max - min);
 }
 
 void processKeyboardInput();
-
+void processMouseMove();
 void RenderQuestUI()
 {
 	// Inside the game loop, after starting ImGui frame
@@ -232,6 +233,14 @@ int main()
 		lastFrame = currentFrame;
 
 		processKeyboardInput();
+		double xpos, ypos;
+		window.getMousePos(xpos, ypos);
+		mousePos = glm::vec2(xpos/ window.getWidth(), ypos/ window.getHeight());
+		if(lastMousePos != mousePos)
+		{ 
+			processMouseMove();
+			lastMousePos = mousePos;
+		}
 
 		//test mouse input
 		if (window.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
@@ -438,23 +447,16 @@ void processKeyboardInput()
 		camera.keyboardMoveLeft(cameraSpeed);
 	if (window.isPressed(GLFW_KEY_D))
 		camera.keyboardMoveRight(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_R))
-		camera.keyboardMoveUp(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_F)) 
-		camera.keyboardMoveDown(cameraSpeed);
-
-	//rotation
-	if (window.isPressed(GLFW_KEY_LEFT))
-		camera.rotateOy(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_RIGHT))
-		camera.rotateOy(-cameraSpeed);
-	if (window.isPressed(GLFW_KEY_UP))
-		camera.rotateOx(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_DOWN))
-		camera.rotateOx(-cameraSpeed);
 
 	if (window.isPressed(GLFW_KEY_ENTER)) {
 		aliveInThisWorld = true;
 		mainQuestCompleted = true;
 	}
+}
+void processMouseMove()
+{
+	float xoffset = mousePos.x - lastMousePos.x;
+	float yoffset = mousePos.y - lastMousePos.y;
+	camera.rotateOx(-yoffset * 180);
+	camera.rotateOy(-xoffset * 180);
 }

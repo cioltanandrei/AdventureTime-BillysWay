@@ -1,7 +1,8 @@
-﻿  camera.cpp
+﻿  main.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\format(42): warning STL4038: The contents of <format> are available only with C++20 or later.
+D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(47,28): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(231,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
 glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
-  GameEngine.vcxproj -> C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
-  'pwsh.exe' is not recognized as an internal or external command,
-  operable program or batch file.
+  GameEngine.vcxproj -> D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
