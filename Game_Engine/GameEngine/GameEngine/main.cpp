@@ -7,6 +7,12 @@
 #include <format>
 #include <cstdlib>
 #include <ctime>
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
+bool mainQuestCompleted = false;
+bool aliveInThisWorld = false;
 
 // Function to generate a random float within a given range
 float getRandomFloat(float min, float max) {
@@ -14,6 +20,34 @@ float getRandomFloat(float min, float max) {
 }
 
 void processKeyboardInput();
+
+void RenderQuestUI()
+{
+	// Inside the game loop, after starting ImGui frame
+	ImGui::Begin("Quests & Story");
+
+	// Main Quest
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Main Quest - %s", mainQuestCompleted ? "Completed" : "Not Completed");
+	//ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Status: %s", mainQuestCompleted ? "Completed" : "Not Completed");
+
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Main Quest: Find the lost pages of Enchiridion.");
+	
+	// Side quests
+	ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Side quests");
+	
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Side Quest: Search for maggots under the box.");
+
+	if(aliveInThisWorld == false)
+		ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Press Enter to make \nyour presence felt.");
+
+	//make text bigger
+	ImGui::SetWindowFontScale(1.24);
+
+	// End ImGui window
+	ImGui::End();
+}
 
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
@@ -36,6 +70,22 @@ bool isWithinPickupDistance(Camera& camera, Mesh& object, float pickupDistance) 
 
 int main()
 {
+	
+	//Initialize ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	const char* fontPath = "imgui/arial.ttf";
+
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF(fontPath, 20);
+
+	//Setup ImGui style
+	ImGui::StyleColorsDark();
+
+	//Setup platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(window.getWindow(), true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
 	glClearColor(0.2f, 0.8f, 1.0f, 1.0f);
 
 	//building and compiling shader program
@@ -355,9 +405,24 @@ int main()
 		glDepthFunc(GL_LESS);  // Restore the default depth function
 		
 		//// End test skybox ////
+
+		//gui
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		//Inside the game loop, after starting ImGui frame
+		RenderQuestUI();
+
+		//Rendering ImGui
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	
 		window.update();
 	}
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 }
 
 void processKeyboardInput()
@@ -375,7 +440,7 @@ void processKeyboardInput()
 		camera.keyboardMoveRight(cameraSpeed);
 	if (window.isPressed(GLFW_KEY_R))
 		camera.keyboardMoveUp(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_F))
+	if (window.isPressed(GLFW_KEY_F)) 
 		camera.keyboardMoveDown(cameraSpeed);
 
 	//rotation
@@ -387,4 +452,9 @@ void processKeyboardInput()
 		camera.rotateOx(cameraSpeed);
 	if (window.isPressed(GLFW_KEY_DOWN))
 		camera.rotateOx(-cameraSpeed);
+
+	if (window.isPressed(GLFW_KEY_ENTER)) {
+		aliveInThisWorld = true;
+		mainQuestCompleted = true;
+	}
 }
