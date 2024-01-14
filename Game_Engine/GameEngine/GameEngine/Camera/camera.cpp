@@ -20,6 +20,7 @@ Camera::Camera()
 	this->rotationOx = 0.0f;
 	this->rotationOy = -90.0f;
 	this->planeLevelY = 2.0f;
+	this->originalCameraSpeed = 30.0f;
 }
 
 Camera::Camera(glm::vec3 cameraPosition, glm::vec3 cameraViewDirection, glm::vec3 cameraUp)
@@ -40,6 +41,8 @@ void Camera::keyboardMoveFront(float cameraSpeed)
 	//make it not go below the plane
 	if (cameraPosition.y < planeLevelY)
 		cameraPosition.y = planeLevelY;
+
+	std::cout << "Moving front, Speed: " << cameraSpeed << std::endl;
 }
 
 void Camera::keyboardMoveBack(float cameraSpeed)
@@ -100,6 +103,12 @@ glm::vec3 Camera::getCameraPosition()
 	return cameraPosition;
 }
 
+glm::vec3 Camera::setCameraPosition(glm::vec3 newPosition)
+{
+	cameraPosition = newPosition;
+	return cameraPosition;
+}
+
 glm::vec3 Camera::getCameraViewDirection()
 {
 	return cameraViewDirection;
@@ -114,4 +123,33 @@ glm::vec3 Camera::getCameraRight()
 	return cameraRight;
 }
 
+void Camera::jump() {
 
+	if (!isJumping) {
+
+		isJumping = true;
+		cameraPosition.y = jumpHeight;
+	}
+}
+
+void Camera::sprint(bool isSprinting, float& cameraSpeed) {
+	if (isSprinting) {
+		cameraSpeed *= sprintMultiplier;
+	}
+	else {
+		cameraSpeed = originalCameraSpeed;
+	}
+}
+
+void Camera::UpdateCamera(float deltaTime) {
+
+	//Simulating gravity
+	cameraPosition.y -= gravity * deltaTime;
+
+		if (cameraPosition.y < planeLevelY) {
+
+			cameraPosition.y = planeLevelY;
+			isJumping = false;
+		}
+		
+}

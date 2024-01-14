@@ -13,10 +13,12 @@ float getRandomFloat(float min, float max) {
 	return min + static_cast<float>(rand()) / RAND_MAX * (max - min);
 }
 
+bool isSprinting = false;
 void processKeyboardInput();
 
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
+
 
 Window window("Game Engine", 800, 800);
 Camera camera;
@@ -178,6 +180,7 @@ int main()
 		treePositions.push_back(glm::vec3(x, y, z));
 	}
 
+	
 
 	//check if we close the window or press the escape button
 	while (!window.isPressed(GLFW_KEY_ESCAPE) &&
@@ -188,6 +191,8 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+
+		// Update camera position based on keyboard input
 		processKeyboardInput();
 
 		//test mouse input
@@ -195,7 +200,6 @@ int main()
 		{
 			std::cout << "Pressing mouse button" << std::endl;
 		}
-		
 		
 		sceneMeshes.push_back(box);
 		
@@ -279,7 +283,6 @@ int main()
 
 		//// End code for the light ////
 	
-
 
 		///// Test plane Obj file //////
 		shader.use();
@@ -369,7 +372,7 @@ int main()
 
 void processKeyboardInput()
 {
-	float cameraSpeed = 30 * deltaTime;
+	float cameraSpeed = camera.originalCameraSpeed * deltaTime;
 
 	//translation
 	if (window.isPressed(GLFW_KEY_W))
@@ -394,4 +397,23 @@ void processKeyboardInput()
 		camera.rotateOx(cameraSpeed);
 	if (window.isPressed(GLFW_KEY_DOWN))
 		camera.rotateOx(-cameraSpeed);
+
+	//Player's actions : jump, sprint, gravity
+	if (window.isPressed(GLFW_KEY_SPACE)) {
+		camera.jump();
+	}
+
+	if (window.isPressed(GLFW_KEY_LEFT_SHIFT)) {
+		isSprinting = true;
+	}
+	else {
+		isSprinting = false;
+	}
+
+	// Call the sprint function
+	camera.sprint(isSprinting, cameraSpeed);
+
+	std::cout << "Sprint status: " << isSprinting << ", Camera Speed: " << cameraSpeed << std::endl;
+	// Apply gravity
+	camera.UpdateCamera(deltaTime);
 }
