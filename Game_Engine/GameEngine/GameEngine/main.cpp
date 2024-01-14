@@ -4,6 +4,7 @@
 #include "Model Loading\mesh.h"
 #include "Model Loading\texture.h"
 #include "Model Loading\meshLoaderObj.h"
+#include "object.h"
 #include <format>
 #include <cstdlib>
 #include <ctime>
@@ -11,15 +12,23 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include <unordered_map>
+#include <string>
+
+#include <windows.h>
+
+const int MAX_SCENES = 3;
+
 bool mainQuestCompleted = false;
 bool aliveInThisWorld = false;
+int realmCounter = 0;
 
 // Function to generate a random float within a given range
 float getRandomFloat(float min, float max) {
 	return min + static_cast<float>(rand()) / RAND_MAX * (max - min);
 }
 
-void processKeyboardInput();
+void processKeyboardInput(Scene& scene);
 
 void RenderQuestUI()
 {
@@ -60,6 +69,7 @@ glm::vec3 lightPos = glm::vec3(-180.0f, 300.0f, -200.0f);
 
 const float PICKUP_DISTANCE = 20.0f;  //  units away
 std::vector<Mesh> sceneMeshes;
+std::vector<vector<Mesh>> realmMeshesOfStaticObjects;
 
 bool isWithinPickupDistance(Camera& camera, Mesh& object, float pickupDistance) {
 	glm::vec3 cameraPos = camera.getCameraPosition();
@@ -99,6 +109,8 @@ int main()
 	GLuint tex3 = loadBMP("Resources/Textures/snow.bmp");
 
 	GLuint tex4 = loadBMP("Resources/Textures/t11_Diffuse.bmp");
+	GLuint tex6 = loadBMP("Resources/Textures/ChocoSanta.bmp");
+	GLuint tex7 = loadBMP("Resources/Textures/CandyCorn.bmp");
 	/*GLuint tex5 = loadBMP("Resources/Textures/t11_Normal.bmp");
 	GLuint tex6 = loadBMP("Resources/Textures/t11_Specular.bmp");
 	GLuint tex7 = loadBMP("Resources/Textures/t11_Glossiness.bmp");
@@ -116,8 +128,23 @@ int main()
 		"Resources/Textures/posz.jpg",
 		"Resources/Textures/negz.jpg"
 	};
+	std::vector<std::string> faces1
+	{
+		"Resources/Textures/right.jpg",
+		"Resources/Textures/left.jpg",
+		"Resources/Textures/top.jpg",
+		"Resources/Textures/bottom.jpg",
+		"Resources/Textures/front.jpg",
+		"Resources/Textures/back.jpg"
+	};
 
 	GLuint cubemapTexture = loadCubemap(faces);
+	GLuint cubemapTexture1 = loadCubemap(faces1);
+	std::vector<GLuint> cubemapTextures;
+	cubemapTextures.push_back(cubemapTexture);
+	cubemapTextures.push_back(cubemapTexture1);
+	cubemapTextures.push_back(cubemapTexture);
+	cubemapTextures.push_back(cubemapTexture1);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -167,6 +194,11 @@ int main()
 	texturesCubeMap[0].id = cubemapTexture;
 	texturesCubeMap[0].type = "texture_diffuse";
 
+	std::vector<Texture> texturesCubeMap1;
+	texturesCubeMap1.push_back(Texture());
+	texturesCubeMap1[0].id = cubemapTexture1;
+	texturesCubeMap1[0].type = "texture_diffuse";
+
 	std::vector<Texture> textures4;
 	textures4.push_back(Texture());
 	textures4[0].id = tex4;
@@ -177,7 +209,15 @@ int main()
 	textures5[0].id = tex9;
 	textures5[0].type = "texture_diffuse";
 
+	std::vector<Texture> textures6;
+	textures6.push_back(Texture());
+	textures6[0].id = tex6;
+	textures6[0].type = "texture_diffuse";
 
+	std::vector<Texture> textures7;
+	textures7.push_back(Texture());
+	textures7[0].id = tex7;
+	textures7[0].type = "texture_diffuse";
 
 	Mesh mesh(vert, ind, textures3);
 
@@ -190,10 +230,24 @@ int main()
 	
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
 	Mesh skybox = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
-	Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
-	Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
+	Mesh skybox1 = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap1);
+	//Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
+	//Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
+	//Mesh santa = loader.loadObj("Resources/Models/ChocoSantaClaus06.obj", textures6);
 	skybox.setup();
 
+	//// SCENE ______________________________
+	//std::vector<Scene> scenes; 
+	std::vector<Scene*> scenes; 
+	std::vector<Object> inventory;
+
+	//int realmCounter = 0;
+	
+	/////////////// CREATING THE FIRST SCENE ///////////////
+
+	scenes.push_back(new Scene(&window, &camera));
+	scenes[0]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
+	scenes[0]->AddShader("shader", &shader);
 
 	// Seed the random number generator
 	srand(static_cast<unsigned int>(time(nullptr)));
@@ -218,20 +272,91 @@ int main()
 		float x = getRandomFloat(minX, maxX);
 		float y = getRandomFloat(minY, maxY);
 		float z = getRandomFloat(minZ, maxZ);
-		treePositions.push_back(glm::vec3(x, y, z));
+		//treePositions.push_back(glm::vec3(x, y, z));
+		auto collider = new CylinderCollider(3.5, 100);
+		//auto interact1 = new InteractNone(new CylinderCollider(7, 100)); // Interaction that does nothing 
+		auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory); //Interaction that makes the object disappear
+
+		scenes[0]->AddObject(Object("shader", "tree", glm::vec3(x, y, z), glm::vec3(0.05f), collider, interact));
 	}
 
+	scenes[0]->AddMesh("sword", loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5));
+	auto collider = new CylinderCollider(3.5, 100);
+	auto interact1 = new InteractNone(new CylinderCollider(7, 100));
+	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
 
+	scenes[0]->AddObject(Object("shader", "sword", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(1.0f), collider, interact1));
+
+	//Scene* currentScene = &scenes[0];
+	/////////////// END OF THE FIRST SCENE ///////////////
+	
+
+
+	/////////////// CREATING THE SECOND SCENE ///////////////
+
+	scenes.push_back(new Scene(&window, &camera));
+	scenes[1]->AddMesh("sword", loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5));
+	scenes[1]->AddShader("shader", &shader);
+	collider = new CylinderCollider(3.5, 100);
+	//auto interact = new InteractNone(new CylinderCollider(7, 100));
+	auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[1]->GetObjects(), &inventory);
+
+	scenes[1]->AddObject(Object("shader", "sword", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(1.0f), collider, interact));
+
+	/////////////// END OF THE SECOND SCENE ///////////////
+
+
+
+	/////////////// CREATING THE THIRD SCENE ///////////////
+	
+	scenes.push_back(new Scene(&window, &camera));
+	scenes[2]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
+	scenes[2]->AddShader("shader", &shader);
+	collider = new CylinderCollider(3.5, 100);
+	//auto interact = new InteractNone(new CylinderCollider(7, 100));
+	interact = new InteractPickup(new CylinderCollider(7, 100), scenes[2]->GetObjects(), &inventory);
+
+	scenes[2]->AddObject(Object("shader", "tree", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(0.05f), collider, interact));
+
+	/////////////// END OF THE THIRD SCENE ///////////////
+
+
+
+	/////////////// CREATING THE FOURTH SCENE ///////////////
+
+	scenes.push_back(new Scene(&window, &camera));
+	/*scenes[3]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
+	scenes[3]->AddShader("shader", &shader);
+	collider = new CylinderCollider(3.5, 100);
+	//auto interact = new InteractNone(new CylinderCollider(7, 100));
+	interact = new InteractPickup(new CylinderCollider(7, 100), scenes[3]->GetObjects(), &inventory);
+
+	scenes[3]->AddObject(Object("shader", "tree", glm::vec3(20.0f, -3.0f, 0.0f), glm::vec3(0.05f), collider, interact));
+	*/
+	scenes[3]->AddMesh("CandyCorn", loader.loadObj("Resources/Models/CandyCornOBJ.obj", textures7));
+	scenes[3]->AddShader("shader", &shader);
+	collider = new CylinderCollider(3.5, 100);
+	//auto interact = new InteractNone(new CylinderCollider(7, 100));
+	interact = new InteractPickup(new CylinderCollider(7, 100), scenes[3]->GetObjects(), &inventory);
+
+	scenes[3]->AddObject(Object("shader", "CandyCorn", glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(50.0f), collider, interact));
+
+	/////////////// END OF THE FOURTH SCENE ///////////////
+
+
+
+	Scene* currentScene = scenes[realmCounter];
 	//check if we close the window or press the escape button
 	while (!window.isPressed(GLFW_KEY_ESCAPE) &&
 		glfwWindowShouldClose(window.getWindow()) == 0)
 	{
+		currentScene = scenes[realmCounter];
 		window.clear();
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		processKeyboardInput();
+		processKeyboardInput(*currentScene);
 
 		//test mouse input
 		if (window.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
@@ -241,7 +366,7 @@ int main()
 		
 		
 		sceneMeshes.push_back(box);
-		
+
 		//std::cout << "Initial Position: " << mesh.getPosition().x << ", " << mesh.getPosition().y << ", " << mesh.getPosition().z << std::endl;
 		//std::cout << "Camera Position: " << camera.getCameraPosition().x << ", " << camera.getCameraPosition().y << ", " << camera.getCameraPosition().z << std::endl;
 		//End code for the box
@@ -337,53 +462,110 @@ int main()
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 		plane.draw(shader);
 
+		currentScene->Draw();
+
 		///// Test Obj files for box ////
 		
 		//Test for multiple Obj loading = trees
 		// Render trees
-		shader.use(); // Assuming you have a shader that's appropriate for the trees
-		GLuint MatrixID3 = glGetUniformLocation(shader.getId(), "MVP");
-		GLuint ModelMatrixID2 = glGetUniformLocation(shader.getId(), "model");
-		ModelMatrix = glm::mat4(1.0);
-		
+		//bool test = true;
+		/*if (realmCounter == 1 && test == true) {
+			for(dataAboutStaticObj currentObj : testMeshes_WithSruct) {
+			//for(i = 1; i < testMeshes_WithSruct.size(); i++ ) {
+			//for(int i = 0; i < testMeshes.size(); i++) {
+			//for (Mesh& mesh : testMeshes) {
+				//Mesh mesh = testMeshes[i];
+				Mesh mesh = currentObj.meshOfStaticObj;
 
-		// Draw each tree
-		for (const auto& position : treePositions)
-		{
+				for(int j = 0; j < currentObj.noOfOccurences; j++) {
+				//for (int j = 1; j < noOfStaticObj[i]; j++) {
+					shader.use();
+					GLuint MatrixID4 = glGetUniformLocation(shader.getId(), "MVP");
+					GLuint ModelMatrixID3 = glGetUniformLocation(shader.getId(), "model");
+					ModelMatrix = glm::mat4(1.0);
+					//ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, -3.0f, 0.0f));
+					ModelMatrix = glm::translate(ModelMatrix, glm::vec3(currentObj.spawnCoord[j]));
+					ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.0f));
+					if (mesh.isDrawable()) {
+						MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+						glUniformMatrix4fv(MatrixID4, 1, GL_FALSE, &MVP[0][0]);
+						glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &ModelMatrix[0][0]);
+						glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &MVP[0][0]);
+						glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+						glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+						glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+
+						mesh.draw(shader);
+					}
+				}
+			}
+		}*/
+
+
+		//if (realmCounter == 0) {
+			/*shader.use(); // Assuming you have a shader that's appropriate for the trees
+			GLuint MatrixID3 = glGetUniformLocation(shader.getId(), "MVP");
+			GLuint ModelMatrixID2 = glGetUniformLocation(shader.getId(), "model");
 			ModelMatrix = glm::mat4(1.0);
-			ModelMatrix = glm::translate(ModelMatrix, position);
-			// Scale if necessary
-			ModelMatrix = glm::scale(ModelMatrix, glm::vec3(0.05f)); // Scale uniformly, adjust as needed
 
-			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-			glUniformMatrix4fv(MatrixID3, 1, GL_FALSE, &MVP[0][0]);
-			glUniformMatrix4fv(ModelMatrixID2, 1, GL_FALSE, &ModelMatrix[0][0]);
-			glUniformMatrix4fv(ModelMatrixID2, 1, GL_FALSE, &MVP[0][0]);
+
+			// Draw each tree
+			for (const auto& position : treePositions)
+			{
+				ModelMatrix = glm::mat4(1.0);
+				ModelMatrix = glm::translate(ModelMatrix, position);
+				// Scale if necessary
+				ModelMatrix = glm::scale(ModelMatrix, glm::vec3(0.05f)); // Scale uniformly, adjust as needed
+
+				glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+				glUniformMatrix4fv(MatrixID3, 1, GL_FALSE, &MVP[0][0]);
+				glUniformMatrix4fv(ModelMatrixID2, 1, GL_FALSE, &ModelMatrix[0][0]);
+				glUniformMatrix4fv(ModelMatrixID2, 1, GL_FALSE, &MVP[0][0]);
+				glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+				glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+				glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+				tree.draw(shader); // Assuming your Mesh class has a draw method
+			}*/
+
+			//currentScene->Draw();
+		//}
+		///// Test Obj files for sword ////
+		//shader.use();
+		/*if (realmCounter == 1 && test == false) {
+			GLuint MatrixID4 = glGetUniformLocation(shader.getId(), "MVP");
+			GLuint ModelMatrixID3 = glGetUniformLocation(shader.getId(), "model");
+			ModelMatrix = glm::mat4(1.0);
+			ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, -3.0f, 0.0f));
+			ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.0f));
+
+			MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+			glUniformMatrix4fv(MatrixID4, 1, GL_FALSE, &MVP[0][0]);
+			glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &ModelMatrix[0][0]);
+			glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &MVP[0][0]);
 			glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 			glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 			glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
-			tree.draw(shader); // Assuming your Mesh class has a draw method
-		}
-		
-		///// Test Obj files for sword ////
-		shader.use();
 
-		GLuint MatrixID4 = glGetUniformLocation(shader.getId(), "MVP");
-		GLuint ModelMatrixID3 = glGetUniformLocation(shader.getId(), "model");
+			sword.draw(shader);
+		}
+		*/
+		//// Test SantaClaus ////
+		/*shader.use();
+		GLuint MatrixID5 = glGetUniformLocation(shader.getId(), "MVP");
+		GLuint ModelMatrixID4 = glGetUniformLocation(shader.getId(), "model");
 		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, -3.0f, 0.0f));
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, 5.0f, 0.0f));
 		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.0f));
 
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-		glUniformMatrix4fv(MatrixID4, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &ModelMatrix[0][0]);
-		glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(MatrixID5, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(ModelMatrixID4, 1, GL_FALSE, &ModelMatrix[0][0]);
+		glUniformMatrix4fv(ModelMatrixID4, 1, GL_FALSE, &MVP[0][0]);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
-		sword.draw(shader);
-
+		santa.draw(shader);*/
 
 
 		//// Test skybox ////
@@ -400,7 +582,8 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 
 		// Draw the skybox
-		skybox.draw2(skyboxShader, cubemapTexture);  // Assuming this method correctly sets up and draws the skybox
+		//skybox.draw2(skyboxShader, cubemapTexture);  // Assuming this method correctly sets up and draws the skybox
+		skybox.draw2(skyboxShader, cubemapTextures[realmCounter]);
 
 		glDepthFunc(GL_LESS);  // Restore the default depth function
 		
@@ -425,8 +608,9 @@ int main()
 	ImGui::DestroyContext();
 }
 
-void processKeyboardInput()
+void processKeyboardInput(Scene &scene)
 {
+	Camera oldPos = camera;
 	float cameraSpeed = 30 * deltaTime;
 
 	//translation
@@ -456,5 +640,25 @@ void processKeyboardInput()
 	if (window.isPressed(GLFW_KEY_ENTER)) {
 		aliveInThisWorld = true;
 		mainQuestCompleted = true;
+		if(realmCounter < MAX_SCENES)
+			realmCounter++;
+		Sleep(400);
+	}
+
+	if (window.isPressed(GLFW_KEY_Z)) {
+		aliveInThisWorld = false;
+		mainQuestCompleted = false;
+		if (realmCounter > 0)
+			realmCounter--;
+		Sleep(400);
+	}
+
+	if (scene.IsColliding(camera.getCameraPosition())) {
+		camera = oldPos;
+	}
+
+	// Interact
+	if (window.isPressed(GLFW_KEY_E)) {
+		scene.Interact(camera.getCameraPosition());
 	}
 }
