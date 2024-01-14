@@ -252,7 +252,6 @@ int main()
 		
 		
 		sceneMeshes.push_back(box);
-		
 		//std::cout << "Initial Position: " << mesh.getPosition().x << ", " << mesh.getPosition().y << ", " << mesh.getPosition().z << std::endl;
 		//std::cout << "Camera Position: " << camera.getCameraPosition().x << ", " << camera.getCameraPosition().y << ", " << camera.getCameraPosition().z << std::endl;
 		//End code for the box
@@ -378,13 +377,34 @@ int main()
 		
 		///// Test Obj files for sword ////
 		shader.use();
+		// Camera parameters
+		glm::vec3 cameraPos = camera.getCameraPosition();
+		glm::vec3 cameraDir = camera.getCameraViewDirection();
+		glm::vec3 cameraUp = camera.getCameraUp();
+		glm::vec3 cameraRight = camera.getCameraRight();
+		// Forward offset (how far in front of the camera)
+		float forwardDistance = 15.0f; // Adjust this value as needed
 
+		// Upward offset (how far above the camera's position)
+		float upwardDistance = 1.0f; // Adjust this value as needed
+
+		// Rightward offset (should be zero if directly in front)
+		float rightwardDistance = 5.0f; // Adjust this if you need the object to be right of the camera
+
+		// Calculate the new object's position
+		glm::vec3 objectPosition = cameraPos + (cameraDir * forwardDistance) + (cameraUp * upwardDistance) + (cameraRight * rightwardDistance);
+
+		// Apply the position to the object's model matrix
 		GLuint MatrixID4 = glGetUniformLocation(shader.getId(), "MVP");
 		GLuint ModelMatrixID3 = glGetUniformLocation(shader.getId(), "model");
 		ModelMatrix = glm::mat4(1.0);
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, -3.0f, 0.0f));
-		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.0f));
-
+		//ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, 0.0f, 0.0f));
+		ModelMatrix = glm::translate(ModelMatrix, objectPosition);
+		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(0.3f));
+		//change the centre of the object at the level of the base of the sword
+		//ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
+		//rotate the sword
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(50000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		glUniformMatrix4fv(MatrixID4, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &ModelMatrix[0][0]);
