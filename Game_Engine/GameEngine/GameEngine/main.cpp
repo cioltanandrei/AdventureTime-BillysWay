@@ -22,6 +22,7 @@ float getRandomFloat(float min, float max) {
 
 void processKeyboardInput();
 void processMouseMove();
+void processMouseMove2(GLFWwindow* window, Camera& camera, glm::vec2& lastMousePos);
 void RenderQuestUI()
 {
 	// Inside the game loop, after starting ImGui frame
@@ -233,14 +234,15 @@ int main()
 		lastFrame = currentFrame;
 
 		processKeyboardInput();
-		double xpos, ypos;
+		/*double xpos, ypos;
 		window.getMousePos(xpos, ypos);
 		mousePos = glm::vec2(xpos/ window.getWidth(), ypos/ window.getHeight());
 		if(lastMousePos != mousePos)
 		{ 
 			processMouseMove();
 			lastMousePos = mousePos;
-		}
+		}*/
+		processMouseMove2(window.getWindow(), camera, lastMousePos);
 
 		//test mouse input
 		if (window.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
@@ -459,4 +461,23 @@ void processMouseMove()
 	float yoffset = mousePos.y - lastMousePos.y;
 	camera.rotateOx(-yoffset * 180);
 	camera.rotateOy(-xoffset * 180);
+}
+void processMouseMove2(GLFWwindow* window, Camera& camera, glm::vec2& lastMousePos) {
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	glm::vec2 mousePos = glm::vec2(xpos, ypos);
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+		float xoffset = xpos - lastMousePos.x;
+		float yoffset = lastMousePos.y - ypos;  // Reversed since y-coordinates range from bottom to top
+
+		float sensitivity = 0.1f; // Change this value to your liking
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+
+		camera.rotateOx(yoffset);
+		camera.rotateOy(-xoffset);
+	}
+
+	lastMousePos = mousePos;
 }
