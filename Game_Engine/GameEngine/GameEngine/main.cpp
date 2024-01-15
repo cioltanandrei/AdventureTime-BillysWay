@@ -62,9 +62,12 @@ void RenderQuestUI()
 	// End ImGui window
 	ImGui::End();
 }
+bool isSprinting = false;
+//void processKeyboardInput();
 
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
+
 
 Window window("Game Engine", 800, 800);
 Camera camera;
@@ -126,12 +129,19 @@ int main()
 	//declare a vector of faces
 	std::vector<std::string> faces
 	{
-		"Resources/Textures/posx.jpg",
-		"Resources/Textures/negx.jpg",
-		"Resources/Textures/posy.jpg",
-		"Resources/Textures/negy.jpg",
-		"Resources/Textures/posz.jpg",
-		"Resources/Textures/negz.jpg"
+		//"Resources/Textures/posx.jpg",
+		//"Resources/Textures/negx.jpg",
+		//"Resources/Textures/posy.jpg",
+		//"Resources/Textures/negy.jpg",
+		//"Resources/Textures/posz.jpg",
+		//"Resources/Textures/negz.jpg"
+
+		"Resources/Textures/rightF2.jpg",
+		"Resources/Textures/leftF2.jpg",
+		"Resources/Textures/topF2.jpg",
+		"Resources/Textures/bottomF2.jpg",
+		"Resources/Textures/frontF2.jpg",
+		"Resources/Textures/backF2.jpg"
 	};
 	std::vector<std::string> faces1
 	{
@@ -289,7 +299,7 @@ int main()
 	auto collider = new CylinderCollider(3.5, 100);
 	auto interact1 = new InteractNone(new CylinderCollider(7, 100));
 	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
-
+	
 	scenes[0]->AddObject(Object("shader", "sword", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(1.0f), collider, interact1));
 
 	//Scene* currentScene = &scenes[0];
@@ -373,12 +383,14 @@ int main()
 		}*/
 		processMouseMove2(window.getWindow(), camera, lastMousePos);
 
+		// Update camera position based on keyboard input
+		//processKeyboardInput();
+
 		//test mouse input
 		if (window.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
 		{
 			std::cout << "Pressing mouse button" << std::endl;
 		}
-		
 		
 		sceneMeshes.push_back(box);
 
@@ -462,7 +474,6 @@ int main()
 
 		//// End code for the light ////
 	
-
 
 		///// Test plane Obj file //////
 		shader.use();
@@ -653,11 +664,37 @@ int main()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
+void processMouseMove()
+{
+	float xoffset = mousePos.x - lastMousePos.x;
+	float yoffset = mousePos.y - lastMousePos.y;
+	camera.rotateOx(-yoffset * 180);
+	camera.rotateOy(-xoffset * 180);
+}
+void processMouseMove2(GLFWwindow* window, Camera& camera, glm::vec2& lastMousePos) {
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	glm::vec2 mousePos = glm::vec2(xpos, ypos);
 
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+		float xoffset = xpos - lastMousePos.x;
+		float yoffset = lastMousePos.y - ypos;  // Reversed since y-coordinates range from bottom to top
+
+		float sensitivity = 0.1f; // Change this value to your liking
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+
+		camera.rotateOx(yoffset);
+		camera.rotateOy(-xoffset);
+	}
+
+	lastMousePos = mousePos;	
+}
 void processKeyboardInput(Scene &scene)
 {
 	Camera oldPos = camera;
-	float cameraSpeed = 30 * deltaTime;
+	//float cameraSpeed = 30 * deltaTime;
+	float cameraSpeed = camera.originalCameraSpeed * deltaTime;
 
 	//translation
 	if (window.isPressed(GLFW_KEY_W))
@@ -693,30 +730,32 @@ void processKeyboardInput(Scene &scene)
 	if (window.isPressed(GLFW_KEY_E)) {
 		scene.Interact(camera.getCameraPosition());
 	}
-}
-void processMouseMove()
-{
-	float xoffset = mousePos.x - lastMousePos.x;
-	float yoffset = mousePos.y - lastMousePos.y;
-	camera.rotateOx(-yoffset * 180);
-	camera.rotateOy(-xoffset * 180);
-}
-void processMouseMove2(GLFWwindow* window, Camera& camera, glm::vec2& lastMousePos) {
-	double xpos, ypos;
-	glfwGetCursorPos(window, &xpos, &ypos);
-	glm::vec2 mousePos = glm::vec2(xpos, ypos);
+	//rotation
+	if (window.isPressed(GLFW_KEY_LEFT))
+		camera.rotateOy(cameraSpeed);
+	if (window.isPressed(GLFW_KEY_RIGHT))
+		camera.rotateOy(-cameraSpeed);
+	if (window.isPressed(GLFW_KEY_UP))
+		camera.rotateOx(cameraSpeed);
+	if (window.isPressed(GLFW_KEY_DOWN))
+		camera.rotateOx(-cameraSpeed);
 
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-		float xoffset = xpos - lastMousePos.x;
-		float yoffset = lastMousePos.y - ypos;  // Reversed since y-coordinates range from bottom to top
-
-		float sensitivity = 0.1f; // Change this value to your liking
-		xoffset *= sensitivity;
-		yoffset *= sensitivity;
-
-		camera.rotateOx(yoffset);
-		camera.rotateOy(-xoffset);
+	//Player's actions : jump, sprint, gravity
+	if (window.isPressed(GLFW_KEY_SPACE)) {
+		camera.jump();
 	}
 
-	lastMousePos = mousePos;
+	if (window.isPressed(GLFW_KEY_LEFT_SHIFT)) {
+		isSprinting = true;
+	}
+	else {
+		isSprinting = false;
+	}
+
+	// Call the sprint function
+	camera.sprint(isSprinting, cameraSpeed);
+
+	std::cout << "Sprint status: " << isSprinting << ", Camera Speed: " << cameraSpeed << std::endl;
+	// Apply gravity
+	camera.UpdateCamera(deltaTime);
 }

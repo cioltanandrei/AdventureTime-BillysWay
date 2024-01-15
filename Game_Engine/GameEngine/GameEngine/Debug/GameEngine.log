@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿  camera.cpp
   window.cpp
   imgui.cpp
@@ -36,3 +37,16 @@ D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cp
 D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(492,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 >>>>>>> feature/attached_sword
   GameEngine.vcxproj -> D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
+=======
+﻿  camera.cpp
+  mesh.cpp
+  meshLoaderObj.cpp
+  main.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\format(42): warning STL4038: The contents of <format> are available only with C++20 or later.
+D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(190,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
+  GameEngine.vcxproj -> D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
+>>>>>>> feature/pick_up_object_bun
