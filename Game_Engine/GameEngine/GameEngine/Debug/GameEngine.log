@@ -1,7 +1,1 @@
-﻿  camera.cpp
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
-  GameEngine.vcxproj -> C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
-  'pwsh.exe' is not recognized as an internal or external command,
-  operable program or batch file.
+﻿  GameEngine.vcxproj -> C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe

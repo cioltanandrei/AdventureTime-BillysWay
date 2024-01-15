@@ -96,6 +96,7 @@ class Mesh
 		bool getIsHeld() const;
 		glm::vec3 getHeldPositionOffset() const;
 		void setPosition(const glm::vec3& newPosition);
+		void updatePositionBasedOnAnimation(float animationTime);
 		glm::vec3 getPosition() const;
 		void updatePositionBasedOnCamera(Camera& camera);  
 		void drawBool(bool state);
