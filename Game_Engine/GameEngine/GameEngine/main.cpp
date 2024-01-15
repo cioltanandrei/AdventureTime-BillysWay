@@ -237,7 +237,7 @@ int main()
 	Mesh skybox = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
 	Mesh skybox1 = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap1);
 	//Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
-	//Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
+	Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
 	//Mesh santa = loader.loadObj("Resources/Models/ChocoSantaClaus06.obj", textures6);
 	skybox.setup();
 
@@ -574,7 +574,7 @@ int main()
 
 			tree.draw(shader); // Assuming your Mesh class has a draw method
 		}
-		
+		*/
 		///// Test Obj files for sword ////
 		shader.use();
 		// Camera parameters
@@ -601,19 +601,17 @@ int main()
 		//ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, 0.0f, 0.0f));
 		ModelMatrix = glm::translate(ModelMatrix, objectPosition);
 		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(0.3f));
-		//change the centre of the object at the level of the base of the sword
-		//ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
 		//rotate the sword
 		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(50000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-		glUniformMatrix4fv(MatrixID5, 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(ModelMatrixID4, 1, GL_FALSE, &ModelMatrix[0][0]);
-		glUniformMatrix4fv(ModelMatrixID4, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(MatrixID4, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &ModelMatrix[0][0]);
+		glUniformMatrix4fv(ModelMatrixID3, 1, GL_FALSE, &MVP[0][0]);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
-		santa.draw(shader);*/
+		sword.draw(shader);
 
 
 		//// Test skybox ////
