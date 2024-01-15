@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿  camera.cpp
   window.cpp
   imgui.cpp
@@ -50,3 +51,6 @@ LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; us
 glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
   GameEngine.vcxproj -> D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
 >>>>>>> feature/pick_up_object_bun
+=======
+﻿  GameEngine.vcxproj -> C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
+>>>>>>> feature/animatie

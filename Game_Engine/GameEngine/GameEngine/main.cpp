@@ -125,6 +125,8 @@ int main()
 	GLuint tex8 = loadBMP("Resources/Textures/t11_Height.bmp");*/
 
 	GLuint tex9 = loadBMP("Resources/Textures/fantasy_sword.bmp");
+	GLuint tex10 = loadBMP("Resources/Textures/snowflake (2).bmp");
+
 	
 	//declare a vector of faces
 	std::vector<std::string> faces
@@ -229,6 +231,13 @@ int main()
 	textures6[0].id = tex6;
 	textures6[0].type = "texture_diffuse";
 
+	//texture for snowflake
+	std::vector<Texture> textures8;
+	textures8.push_back(Texture());
+	textures8[0].id = tex10;
+	textures8[0].type = "texture_diffuse";
+
+
 	std::vector<Texture> textures7;
 	textures7.push_back(Texture());
 	textures7[0].id = tex7;
@@ -248,9 +257,13 @@ int main()
 	Mesh skybox1 = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap1);
 	//Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
 	Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
+	Mesh snowflake = loader.loadObj("Resources/Models/snowflake.obj",textures8);
 	//Mesh santa = loader.loadObj("Resources/Models/ChocoSantaClaus06.obj", textures6);
 	skybox.setup();
+	
 
+	// Animation time
+	float snowflakeAnimationTime = 0.0f;
 	//// SCENE ______________________________
 	//std::vector<Scene> scenes; 
 	std::vector<Scene*> scenes; 
@@ -263,6 +276,8 @@ int main()
 	scenes.push_back(new Scene(&window, &camera));
 	scenes[0]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
 	scenes[0]->AddShader("shader", &shader);
+	
+
 
 	// Seed the random number generator
 	srand(static_cast<unsigned int>(time(nullptr)));
@@ -421,6 +436,8 @@ int main()
 			}
 			qKeyWasPressed = true;
 		}
+
+
 		//Code for the box
 		glm::mat4 ViewMatrix = glm::lookAt(camera.getCameraPosition(), camera.getCameraPosition() + camera.getCameraViewDirection(), camera.getCameraUp());
 		glm::mat4 ProjectionMatrix = glm::perspective(90.0f, window.getWidth() * 1.0f / window.getHeight(), 0.1f, 10000.0f);
@@ -455,6 +472,9 @@ int main()
 				mesh.draw(shader);
 			}
 		}
+
+		
+
 
 		//// Code for the light ////
 
@@ -624,6 +644,30 @@ int main()
 
 		sword.draw(shader);
 
+		
+
+		shader.use();
+		GLuint MatrixID5 = glGetUniformLocation(shader.getId(), "MVP");
+		GLuint ModelMatrixID4 = glGetUniformLocation(shader.getId(), "model");
+
+		ModelMatrix = glm::mat4(1.0);
+		ModelMatrix = glm::translate(ModelMatrix, snowflake.getPosition());
+		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.0f));  // Adjust scale as needed
+
+		 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+		glUniformMatrix4fv(MatrixID5, 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(ModelMatrixID4, 1, GL_FALSE, &ModelMatrix[0][0]);
+		glUniformMatrix4fv(ModelMatrixID4, 1, GL_FALSE, &MVP[0][0]);
+		glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+
+		// Draw the snowflake
+		snowflake.draw(shader);
+		snowflake.updatePositionBasedOnAnimation(snowflakeAnimationTime);
+
+		// Update the animation time
+		snowflakeAnimationTime += deltaTime;
 
 		//// Test skybox ////
 		glDepthFunc(GL_LEQUAL);  // Change depth function to allow depth test pass when values are equal

@@ -2,7 +2,11 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+<<<<<<< HEAD
       <FullPath>D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe</FullPath>
+=======
+      <FullPath>C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe</FullPath>
+>>>>>>> feature/animatie
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

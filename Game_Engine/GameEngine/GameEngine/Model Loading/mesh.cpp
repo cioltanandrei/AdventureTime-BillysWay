@@ -157,6 +157,18 @@ void Mesh::setPosition(const glm::vec3& newPosition) {
 	position = newPosition;
 }
 
+void Mesh::updatePositionBasedOnAnimation(float animationTime) {
+	// Modify the position based on animation
+	float snowflakeX = sin(animationTime) * 5.0f;  // Adjust as needed
+	float snowflakeY = cos(animationTime) * 5.0f;
+	float snowflakeZ = cos(animationTime) * 10.0f;
+
+	float yOffset = 10.0f;  // Adjust this value
+	snowflakeY += yOffset;
+
+	position = glm::vec3(snowflakeX, snowflakeY, snowflakeZ);
+}
+
 // Method to get the current position of the mesh
 glm::vec3 Mesh::getPosition() const {
 	return position;
