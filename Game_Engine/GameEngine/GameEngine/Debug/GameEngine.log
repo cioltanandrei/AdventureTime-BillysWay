@@ -1,9 +1,10 @@
 ﻿  main.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\format(43): warning STL4038: The contents of <format> are available only with C++20 or later.
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\format(42): warning STL4038: The contents of <format> are available only with C++20 or later.
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
-C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\Dependencies\GLFW\include\glfw3.h(98,1): message : see previous definition of 'APIENTRY'
-C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(55,28): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(352,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  GameEngine.vcxproj -> C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
-  'pwsh.exe' is not recognized as an internal or external command,
-  operable program or batch file.
+  (compiling source file 'main.cpp')
+  D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\Dependencies\GLFW\include\glfw3.h(98,1):
+  see previous definition of 'APIENTRY'
+  
+D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(55,28): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(355,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  GameEngine.vcxproj -> D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
