@@ -325,21 +325,21 @@ int main()
 	/////////////// CREATING THE FOURTH SCENE ///////////////
 
 	scenes.push_back(new Scene(&window, &camera));
-	/*scenes[3]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
+	scenes[3]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
 	scenes[3]->AddShader("shader", &shader);
 	collider = new CylinderCollider(3.5, 100);
 	//auto interact = new InteractNone(new CylinderCollider(7, 100));
 	interact = new InteractPickup(new CylinderCollider(7, 100), scenes[3]->GetObjects(), &inventory);
 
 	scenes[3]->AddObject(Object("shader", "tree", glm::vec3(20.0f, -3.0f, 0.0f), glm::vec3(0.05f), collider, interact));
-	*/
-	scenes[3]->AddMesh("CandyCorn", loader.loadObj("Resources/Models/CandyCornOBJ.obj", textures7));
-	scenes[3]->AddShader("shader", &shader);
-	collider = new CylinderCollider(3.5, 100);
+	
+	//scenes[3]->AddMesh("CandyCorn", loader.loadObj("Resources/Models/CandyCornOBJ.obj", textures7));
+	//scenes[3]->AddShader("shader", &shader);
+	//collider = new CylinderCollider(3.5, 100);
 	//auto interact = new InteractNone(new CylinderCollider(7, 100));
-	interact = new InteractPickup(new CylinderCollider(7, 100), scenes[3]->GetObjects(), &inventory);
+	//interact = new InteractPickup(new CylinderCollider(7, 100), scenes[3]->GetObjects(), &inventory);
 
-	scenes[3]->AddObject(Object("shader", "CandyCorn", glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(50.0f), collider, interact));
+	//scenes[3]->AddObject(Object("shader", "CandyCorn", glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(50.0f), collider, interact));
 
 	/////////////// END OF THE FOURTH SCENE ///////////////
 
