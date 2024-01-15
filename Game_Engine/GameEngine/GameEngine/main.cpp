@@ -755,7 +755,6 @@ void processKeyboardInput(Scene &scene)
 	// Call the sprint function
 	camera.sprint(isSprinting, cameraSpeed);
 
-	std::cout << "Sprint status: " << isSprinting << ", Camera Speed: " << cameraSpeed << std::endl;
 	// Apply gravity
 	camera.UpdateCamera(deltaTime);
 }
