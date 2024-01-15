@@ -1,0 +1,29 @@
+# MTL written from /Users/manapkoolman/Desktop/Yusup/Models/ADVENTURE TIME/DemonBloodSword.obj
+newmtl Black
+Kd 0 0 0.00237378
+Ns 256
+d 1
+illum 2
+Ka 0 0 0
+Ks 0.2 0.2 0.2
+newmtl Dark_045Red
+Kd 0.0504252 0.0024677 0.00341371
+Ns 256
+d 1
+illum 2
+Ka 0 0 0
+Ks 0.2 0.2 0.2
+newmtl Red
+Kd 0.622525 0 0
+Ns 256
+d 1
+illum 2
+Ka 0 0 0
+Ks 0.2 0.2 0.2
+newmtl Tape
+Kd 0.137603 0.0174614 0.00237378
+Ns 256
+d 1
+illum 2
+Ka 0 0 0
+Ks 0.2 0.2 0.2

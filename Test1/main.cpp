@@ -1,127 +1,315 @@
-#include<iostream>
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
+#include <iostream>
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <GLFW/glfw3.h>
 
-#include"shaderClass.h"
-#include"VAO.h"
-#include"VBO.h"
-#include"EBO.h"
+// Vertex Shader source code
+const char* vertexShaderSource = R"(
+    #version 330 core
+    layout(location = 0) in vec3 vertexPos;
+    out float gradientFactor;
+    uniform mat4 transform;
+    void main() {
+        gl_Position = transform * vec4(vertexPos, 1.0);
+        gradientFactor = (vertexPos.y + 0.5) * 2.0;
+    }
+)";
+
+// Fragment Shader source code
+const char* fragmentShaderSource = R"(
+    #version 330 core
+    out vec4 fragColor;
+    in float gradientFactor;
+    void main() {
+        vec3 darkBlue = vec3(0.0, 0.5, 1.0);
+        vec3 lightBlue = vec3(0.8, 0.8, 1.0);
+        vec3 color = mix(darkBlue, lightBlue, gradientFactor);
+        fragColor = vec4(color, 1.0);
+    }
+)";
+
+// Red Vertex Shader source code
+const char* redVertexShaderSource = R"(
+    #version 330 core
+    layout(location = 0) in vec3 vertexPos;
+    uniform mat4 transform;
+    void main() {
+        gl_Position = transform * vec4(vertexPos, 1.0);
+    }
+)";
+
+// Red Fragment Shader source code
+const char* redFragmentShaderSource = R"(
+    #version 330 core
+    out vec4 fragColor;
+    void main() {
+        fragColor = vec4(1.0, 0.0, 0.0, 1.0); // Red color
+    }
+)";
+
+//mountaines
+float sx = 1.0f, sy = 1.0f, sz = 0.0f;
+//red triangle
+//float rx = 0.8f, ry = 0.6f, rz = 0.0f;
+
+//miscare stanga dreapta
+glm::vec3 playerPos = glm::vec3(0.0f, 0.0f, 0.0f);
+float playerSpeed = 0.001f;
+//jumping
+float playerVelocityY = 0.0f;
+const float gravity = 0.0001f;
+bool isJumping = false;
+const float jumpStrength = 0.01f;
 
 
+//width and height for the window
+int width = 1080, height = 1920;
 
-// Vertices coordinates
-GLfloat vertices[] =
-{ //  COORDINATES         /     COLORS           //
-	-0.5f, -0.5f , 0.0f,    1.0f, 01.0f, 0.0f, // Lower left corner
-	-0.5f,  0.5f , 0.0f,     0.0f, 1.0f, 0.0f, // Upper left corner
-	 0.5f,  0.5f , 0.0f,     0.0f, 0.0f, 1.0f, // Upper right corner
-	 0.5f, -0.5f , 0.0f,     1.0f, 1.0f, 1.0f, // Lower left corner
-};
-// Indices for vertices order
-GLuint indices[] =
+void window_callback(GLFWwindow* window, int new_width, int new_height)
 {
-	0, 2, 1,
-	0, 3, 2,
-};
+	//what should we do here?
+	glViewport(0, 0, new_width, new_height);
+}
 
-
-
-int main()
+//Handling cursor position
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
+	std::cout << "The mouse cursor is: " << xpos << " " << ypos << std::endl;
+}
+
+int main() {
 	// Initialize GLFW
-	glfwInit();
+	if (!glfwInit()) {
+		std::cerr << "Failed to initialize GLFW" << std::endl;
+		return -1;
+	}
 
-	// Tell GLFW what version of OpenGL we are using 
-	// In this case we are using OpenGL 3.3
+	// Set OpenGL version and profile
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	// Tell GLFW we are using the CORE profile
-	// So that means we only have the modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Create a GLFWwindow object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	GLFWwindow* window = glfwCreateWindow(800, 800, "YoutubeOpenGL", NULL, NULL);
-	// Error check if the window fails to create
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+	// Create a GLFW window
+	GLFWwindow* window = glfwCreateWindow(height,width, "Gradient Triangles", NULL, NULL);
+	if (!window) {
+		std::cerr << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
-	// Introduce the window into the current context
+
 	glfwMakeContextCurrent(window);
 
-	//Load GLAD so it configures OpenGL
-	gladLoadGL();
-	// Specify the viewport of OpenGL in the Window
-	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-	glViewport(0, 0, 800, 800);
-
-
-
-	// Generates Shader object using shaders defualt.vert and default.frag
-	Shader shaderProgram("default.vert", "default.frag");
-
-
-
-	// Generates Vertex Array Object and binds it
-	VAO VAO1;
-	VAO1.Bind();
-
-	// Generates Vertex Buffer Object and links it to vertices
-	VBO VBO1(vertices, sizeof(vertices));
-	// Generates Element Buffer Object and links it to indices
-	EBO EBO1(indices, sizeof(indices));
-
-	// Links VBO attributes such as coordinates and colors to VAO
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	// Unbind all to prevent accidentally modifying them
-	VAO1.Unbind();
-	VBO1.Unbind();
-	EBO1.Unbind();
-
-	// Gets ID of uniform called "scale"
-	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-
-
-	// Main while loop
-	while (!glfwWindowShouldClose(window))
-	{
-		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-		// Clean the back buffer and assign the new color to it
-		glClear(GL_COLOR_BUFFER_BIT);
-		// Tell OpenGL which Shader Program we want to use
-		shaderProgram.Activate();
-		// Assigns a value to the uniform; NOTE: Must always be done after activating the Shader Program
-		glUniform1f(uniID, 0.5f);
-		// Bind the VAO so OpenGL knows to use it
-		VAO1.Bind();
-		// Draw primitives, number of indices, datatype of indices, index of indices
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
-		// Swap the back buffer with the front buffer
-		glfwSwapBuffers(window);
-		// Take care of all GLFW events
-		glfwPollEvents();
+	// Load OpenGL functions using GLAD
+	if (!gladLoadGL()) {
+		std::cerr << "Failed to initialize GLAD" << std::endl;
+		glfwTerminate();
+		return -1;
 	}
 
+	glViewport(0, 0, height, width);
 
 
-	// Delete all the objects we've created
-	VAO1.Delete();
-	VBO1.Delete();
-	EBO1.Delete();
-	shaderProgram.Delete();
-	// Delete window before ending the program
+
+	//vertex shader, fragment shader and shader program for mountaines
+	// Create Vertex Shader Object and compile it
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+
+	// Create Fragment Shader Object and compile it
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	// Create Shader Program, attach shaders, and link
+	GLuint shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	//redvertex shader, redfragment shader and redshader program for the red triangle
+	// Create redVertex Shader Object and compile it
+	GLuint redVertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(redVertexShader, 1, &redVertexShaderSource, NULL);
+	glCompileShader(redVertexShader);
+
+	// Create Red Fragment Shader Object and compile it
+	GLuint redFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(redFragmentShader, 1, &redFragmentShaderSource, NULL);
+	glCompileShader(redFragmentShader);
+
+	// Create Red Shader Program, attach shaders, and link
+	GLuint redShaderProgram = glCreateProgram();
+	glAttachShader(redShaderProgram, redVertexShader);
+	glAttachShader(redShaderProgram, redFragmentShader);
+	glLinkProgram(redShaderProgram);
+
+	glDeleteShader(redVertexShader);
+	glDeleteShader(redFragmentShader);
+
+	//vertices, indices and VAO, VBO, EBO for the mountaines
+	float vertices[] = {
+		0.0f,  0.9f, 0.0f,
+	   -0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+
+		0.25f, -0.5f, 0.0f,
+		0.5f,  0.6f, 0.0f,
+		1.0f, -0.5f, 0.0f,
+
+	   -0.2f, -0.5f, 0.0f,
+	   -0.5f, 0.6f, 0.0f,
+	   -1.0f, -0.5f, 0.0f
+	};
+
+	GLuint indices[] = {
+		0, 1, 2,
+		3, 4, 5,
+		6, 7, 8
+	};
+
+	GLuint VAO, VBO, EBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	glm::mat4 trans(1.0f);
+	trans = glm::scale(trans, glm::vec3(sx, sy, sz));
+
+	glfwSetCursorPosCallback(window, cursor_position_callback);
+
+	//redvertices, redindices and redVAO, redVBO, redEBO for the red triangle
+	float redVertices[] = {
+	-0.8f, -0.4f, 0.0f,    // Top-left vertex
+	-0.6f, -0.4f, 0.0f,    // Top-right vertex
+	-0.6f, -0.6f, 0.0f,    // Bottom-right vertex
+	-0.8f, -0.6f, 0.0f     // Bottom-left vertex
+	};
+	// Define the indices for the square
+	GLuint redIndices[] = { 0, 1, 2, 0, 2, 3 };
+
+	// Create a new VAO, VBO, and EBO for the red triangle
+	GLuint redVAO, redVBO, redEBO;
+	glGenVertexArrays(1, &redVAO);
+	glGenBuffers(1, &redVBO);
+	glGenBuffers(1, &redEBO);
+
+	// Bind the VAO and VBO for the red triangle
+	glBindVertexArray(redVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, redVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(redVertices), redVertices, GL_STATIC_DRAW);
+
+	// Bind the EBO for the red triangle
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, redEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(redIndices), redIndices, GL_STATIC_DRAW); 
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	//trans for the mountaines
+	glm::mat4 redtrans(1.0f);
+	redtrans = glm::scale(redtrans, glm::vec3(sx, sy, sz));
+	redtrans = glm::translate(redtrans, glm::vec3(-0.9f, -0.9f, 0.0f)); // Adjust the translation for positioning
+
+	glfwSetFramebufferSizeCallback(window, window_callback);
+
+	while (!glfwWindowShouldClose(window)) {
+		glClearColor(0.8f, 0.9f, 1.0f, 0.8f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		// Check for input
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+			playerPos.x += playerSpeed;
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+			playerPos.x -= playerSpeed;
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !isJumping)
+		{
+			playerVelocityY = jumpStrength;
+			isJumping = true;
+		}
+
+		// Apply gravity
+		if (isJumping)
+		{
+			playerPos.y += playerVelocityY;
+			playerVelocityY -= gravity;
+		}
+
+		// Simulate ground collision
+		if (playerPos.y < 0.0f) // Assuming ground is at y = -0.5
+		{
+			playerPos.y = 0.0f;
+			isJumping = false;
+			playerVelocityY = 0.0f;
+		}
+
+	
+
+		// Update player transformation matrix
+		glm::mat4 redtrans = glm::mat4(1.0f);
+		redtrans = glm::translate(redtrans, playerPos);
+		redtrans =glm::scale(redtrans, glm::vec3(sx, sy, sz));
+
+		glUseProgram(shaderProgram);
+		unsigned int transformLocMount = glGetUniformLocation(shaderProgram, "transform");
+		glUniformMatrix4fv(transformLocMount, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+
+		glUseProgram(redShaderProgram); // Assuming you have a shader program for red color
+		unsigned int transformLocPlayer = glGetUniformLocation(redShaderProgram, "transform");
+		glUniformMatrix4fv(transformLocPlayer, 1, GL_FALSE, glm::value_ptr(redtrans));
+
+		glBindVertexArray(redVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		{
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+			//glfwTerminate();
+		}
+
+	}
+
+	//delete vao,vbo,ebo for the mountaines
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+	glDeleteProgram(shaderProgram);
+
+	//delete redvao,redvbo,red ebo for the red triangle
+	glDeleteVertexArrays(1, &redVAO);
+	glDeleteBuffers(1, &redVBO);
+	glDeleteBuffers(1, &redEBO);
+	glDeleteProgram(redShaderProgram);
+
+
 	glfwDestroyWindow(window);
-	// Terminate GLFW before ending the program
 	glfwTerminate();
+
 	return 0;
 }
-
-
-
-
-
-

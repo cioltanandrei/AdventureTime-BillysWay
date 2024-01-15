@@ -1,0 +1,19 @@
+#version 330 core
+
+// Output data
+out vec4 fragColor;
+
+// The input gradient factor from the vertex shader
+in float gradientFactor;
+
+
+void main()
+{
+    // Define the two colors for the gradient
+    vec4 bottomColor = vec4(0.0, 0.5, 1.0, 1.0); // dark blue
+    vec4 topColor = vec4(0.8, 0.8, 1.0, 1.0);   // almost white
+
+    // Interpolate between the two colors based on the gradientFactor
+    fragColor = mix(bottomColor, topColor, gradientFactor);
+
+}
