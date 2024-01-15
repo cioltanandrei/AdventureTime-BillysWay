@@ -23,6 +23,8 @@ bool mainQuestCompleted = false;
 bool aliveInThisWorld = false;
 int realmCounter = 0;
 
+glm::vec2 mousePos = glm::vec2(0.0f);
+glm::vec2 lastMousePos = glm::vec2(0.0f);
 // Function to generate a random float within a given range
 float getRandomFloat(float min, float max) {
 	return min + static_cast<float>(rand()) / RAND_MAX * (max - min);
@@ -30,6 +32,9 @@ float getRandomFloat(float min, float max) {
 
 void processKeyboardInput(Scene& scene);
 
+//void processKeyboardInput();
+void processMouseMove();
+void processMouseMove2(GLFWwindow* window, Camera& camera, glm::vec2& lastMousePos);
 void RenderQuestUI()
 {
 	// Inside the game loop, after starting ImGui frame
@@ -357,6 +362,16 @@ int main()
 		lastFrame = currentFrame;
 
 		processKeyboardInput(*currentScene);
+		//processKeyboardInput();
+		/*double xpos, ypos;
+		window.getMousePos(xpos, ypos);
+		mousePos = glm::vec2(xpos/ window.getWidth(), ypos/ window.getHeight());
+		if(lastMousePos != mousePos)
+		{ 
+			processMouseMove();
+			lastMousePos = mousePos;
+		}*/
+		processMouseMove2(window.getWindow(), camera, lastMousePos);
 
 		//test mouse input
 		if (window.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
@@ -557,6 +572,39 @@ int main()
 		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, 5.0f, 0.0f));
 		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.0f));
 
+			tree.draw(shader); // Assuming your Mesh class has a draw method
+		}
+		
+		///// Test Obj files for sword ////
+		shader.use();
+		// Camera parameters
+		glm::vec3 cameraPos = camera.getCameraPosition();
+		glm::vec3 cameraDir = camera.getCameraViewDirection();
+		glm::vec3 cameraUp = camera.getCameraUp();
+		glm::vec3 cameraRight = camera.getCameraRight();
+		// Forward offset (how far in front of the camera)
+		float forwardDistance = 15.0f; // Adjust this value as needed
+
+		// Upward offset (how far above the camera's position)
+		float upwardDistance = 1.0f; // Adjust this value as needed
+
+		// Rightward offset (should be zero if directly in front)
+		float rightwardDistance = 5.0f; // Adjust this if you need the object to be right of the camera
+
+		// Calculate the new object's position
+		glm::vec3 objectPosition = cameraPos + (cameraDir * forwardDistance) + (cameraUp * upwardDistance) + (cameraRight * rightwardDistance);
+
+		// Apply the position to the object's model matrix
+		GLuint MatrixID4 = glGetUniformLocation(shader.getId(), "MVP");
+		GLuint ModelMatrixID3 = glGetUniformLocation(shader.getId(), "model");
+		ModelMatrix = glm::mat4(1.0);
+		//ModelMatrix = glm::translate(ModelMatrix, glm::vec3(10.0f, 0.0f, 0.0f));
+		ModelMatrix = glm::translate(ModelMatrix, objectPosition);
+		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(0.3f));
+		//change the centre of the object at the level of the base of the sword
+		//ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
+		//rotate the sword
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(50000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 		glUniformMatrix4fv(MatrixID5, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(ModelMatrixID4, 1, GL_FALSE, &ModelMatrix[0][0]);
@@ -622,20 +670,6 @@ void processKeyboardInput(Scene &scene)
 		camera.keyboardMoveLeft(cameraSpeed);
 	if (window.isPressed(GLFW_KEY_D))
 		camera.keyboardMoveRight(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_R))
-		camera.keyboardMoveUp(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_F)) 
-		camera.keyboardMoveDown(cameraSpeed);
-
-	//rotation
-	if (window.isPressed(GLFW_KEY_LEFT))
-		camera.rotateOy(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_RIGHT))
-		camera.rotateOy(-cameraSpeed);
-	if (window.isPressed(GLFW_KEY_UP))
-		camera.rotateOx(cameraSpeed);
-	if (window.isPressed(GLFW_KEY_DOWN))
-		camera.rotateOx(-cameraSpeed);
 
 	if (window.isPressed(GLFW_KEY_ENTER)) {
 		aliveInThisWorld = true;
@@ -661,4 +695,30 @@ void processKeyboardInput(Scene &scene)
 	if (window.isPressed(GLFW_KEY_E)) {
 		scene.Interact(camera.getCameraPosition());
 	}
+}
+void processMouseMove()
+{
+	float xoffset = mousePos.x - lastMousePos.x;
+	float yoffset = mousePos.y - lastMousePos.y;
+	camera.rotateOx(-yoffset * 180);
+	camera.rotateOy(-xoffset * 180);
+}
+void processMouseMove2(GLFWwindow* window, Camera& camera, glm::vec2& lastMousePos) {
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	glm::vec2 mousePos = glm::vec2(xpos, ypos);
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+		float xoffset = xpos - lastMousePos.x;
+		float yoffset = lastMousePos.y - ypos;  // Reversed since y-coordinates range from bottom to top
+
+		float sensitivity = 0.1f; // Change this value to your liking
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+
+		camera.rotateOx(yoffset);
+		camera.rotateOy(-xoffset);
+	}
+
+	lastMousePos = mousePos;
 }

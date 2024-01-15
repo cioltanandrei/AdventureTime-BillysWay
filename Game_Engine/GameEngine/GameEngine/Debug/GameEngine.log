@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿  camera.cpp
   window.cpp
   imgui.cpp
@@ -26,4 +27,12 @@ D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cp
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
 glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
+=======
+﻿  main.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\format(42): warning STL4038: The contents of <format> are available only with C++20 or later.
+D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(48,28): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(232,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(491,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp(492,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+>>>>>>> feature/attached_sword
   GameEngine.vcxproj -> D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\Debug\GameEngine.exe
