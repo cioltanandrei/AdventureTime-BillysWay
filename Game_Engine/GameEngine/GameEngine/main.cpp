@@ -562,18 +562,22 @@ int main()
 		float z = getRandomFloat(minZ, maxZ);
 		//treePositions.push_back(glm::vec3(x, y, z));
 		auto collider = new CylinderCollider(3.5, 100);
-		auto interact1 = new InteractNone(new CylinderCollider(7, 100)); // Interaction that does nothing 
-		//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory); //Interaction that makes the object disappear
+		//auto interact1 = new InteractNone(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &interactedObjects); // Interaction that does nothing 
+		auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory); //Interaction that makes the object disappear
 
-		scenes[0]->AddObject(Object("shader", "tree", glm::vec3(x, y, z), glm::vec3(3.0f), collider, interact1));
+		scenes[0]->AddObject(Object("shader", "tree", glm::vec3(x, y, z), glm::vec3(3.0f), collider, interact));
+
 	}
 
-	//scenes[0]->AddMesh("sword", loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5));
-	//auto collider = new CylinderCollider(3.5, 100);
-	//auto interact1 = new InteractNone(new CylinderCollider(7, 100));
+	scenes[0]->AddMesh("sword", loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5));
+	auto collider = new CylinderCollider(3.5, 100);
+	auto interact1 = new InteractNone(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &interactedObjects);
 	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
-	
-	//scenes[0]->AddObject(Object("shader", "sword", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(1.0f), collider, interact1));
+	interactiveNPCSInScenes.push_back("sword");
+	hasInteractedWithSceneNPC.push_back(false);
+	Collectables.push_back({ "sword", 1 });
+
+	scenes[0]->AddObject(Object("shader", "sword", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(1.0f), collider, interact1));
 
 
 	//do the same for the apple
@@ -597,7 +601,7 @@ int main()
 		float z = getRandomFloat(minZ, maxZ);
 		//treePositions.push_back(glm::vec3(x, y, z));
 		auto collider = new CylinderCollider(3.5, 100);
-		auto interact1 = new InteractNone(new CylinderCollider(7, 100)); // Interaction that does nothing 
+		auto interact1 = new InteractNone(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &interactedObjects); // Interaction that does nothing 
 		//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory); //Interaction that makes the object disappear
 
 		scenes[1]->AddObject(Object("shader", "tree2", glm::vec3(x, y, z), glm::vec3(0.05f), collider, interact1));

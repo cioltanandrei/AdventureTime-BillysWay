@@ -1,26 +1,45 @@
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\vc143.pdb
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\vc143.idb
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\texture.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\shader.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\object.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\vc143.pdb
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\vc143.idb
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\texture.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\shader.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\object.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\mesh.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\meshloaderobj.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\main.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_widgets.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_tables.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_opengl3.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_opengl2.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_glfw.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_draw.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_demo.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\imgui.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\window.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\camera.obj
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\debug\gameengine.exe
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\gameengine\debug\gameengine.ilk
+c:\users\andy\documents\github\proiect-acg\game_engine\gameengine\debug\gameengine.pdb
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\camera.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_demo.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_draw.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_glfw.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_opengl2.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_opengl3.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_tables.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_widgets.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\main.obj
 d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\mesh.obj
 d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\meshloaderobj.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\main.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_widgets.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_tables.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_opengl3.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_opengl2.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_impl_glfw.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_draw.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui_demo.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\imgui.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\object.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\shader.obj
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\texture.obj
 d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\window.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\camera.obj
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\debug\gameengine.exe
 d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\gameengine.ilk
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\vc143.idb
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\vc143.pdb
 d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\debug\gameengine.pdb
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\vc142.idb
-d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\vc142.pdb
+d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\debug\gameengine.exe
 d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\gameengine.tlog\cl.command.1.tlog
 d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\gameengine.tlog\cl.items.tlog
 d:\resurse facultate\repos\proiect-acg\game_engine\gameengine\gameengine\debug\gameengine.tlog\cl.read.1.tlog
