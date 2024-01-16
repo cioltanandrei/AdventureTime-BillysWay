@@ -237,11 +237,11 @@ int main()
 	GLuint cubemapTexture3 = loadCubemap(faces_candy);
 	GLuint cubemapTexture4 = loadCubemap(faces_fire);
 	std::vector<GLuint> cubemapTextures;
+	cubemapTextures.push_back(cubemapTexture2);
 	cubemapTextures.push_back(cubemapTexture);
 	cubemapTextures.push_back(cubemapTexture1);
-	cubemapTextures.push_back(cubemapTexture2);
-	cubemapTextures.push_back(cubemapTexture3);
 	cubemapTextures.push_back(cubemapTexture4);
+	cubemapTextures.push_back(cubemapTexture3);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -389,11 +389,12 @@ int main()
 	Mesh plane_candy = loader.loadObj("Resources/Models/plane.obj", textures10);
 	Mesh plane_finn = loader.loadObj("Resources/Models/plane.obj", textures11);
 	Mesh plane_fire = loader.loadObj("Resources/Models/plane.obj", textures12);
+	planeMeshes.push_back(plane_finn);
 	planeMeshes.push_back(plane_ice);
 	planeMeshes.push_back(plane_slime);
-	planeMeshes.push_back(plane_finn);
-	planeMeshes.push_back(plane_candy);
 	planeMeshes.push_back(plane_fire);
+	planeMeshes.push_back(plane_candy);
+	
 	//planeMeshes.push_back(plane1);
 	//planeMeshes.push_back(plane1);
 	//planeMeshes.push_back(plane1);
