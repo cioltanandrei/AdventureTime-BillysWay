@@ -1,44 +1,16 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Camera\camera.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\camera.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Graphics\window.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\window.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_demo.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_demo.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_draw.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_draw.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_glfw.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_glfw.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_opengl2.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_opengl2.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_opengl3.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_opengl3.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_tables.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_tables.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_widgets.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_widgets.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\main.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\meshLoaderObj.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\meshLoaderObj.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\mesh.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\mesh.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\object.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\object.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Shaders\shader.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\shader.obj
-D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\texture.cpp;D:\resurse facultate\repos\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\texture.obj
-=======
-D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Camera\camera.cpp;D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\camera.obj
-D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Graphics\window.cpp;D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\window.obj
-D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp;D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\main.obj
-D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\meshLoaderObj.cpp;D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\meshLoaderObj.obj
-D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\mesh.cpp;D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\mesh.obj
-D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Shaders\shader.cpp;D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\shader.obj
-D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\texture.cpp;D:\Materii\cursuri\GITHUB\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\texture.obj
->>>>>>> feature/pick_up_object_bun
-=======
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Camera\camera.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\camera.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Graphics\window.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\window.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_demo.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_demo.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_draw.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_draw.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_glfw.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_glfw.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_opengl2.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_opengl2.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_opengl3.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_opengl3.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_tables.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_tables.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_widgets.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_widgets.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\main.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\meshLoaderObj.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\meshLoaderObj.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\mesh.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\mesh.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Shaders\shader.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\shader.obj
-C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\texture.cpp;C:\Users\delfi\Desktop\Facultate\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\texture.obj
->>>>>>> feature/animatie
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Camera\camera.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\camera.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Graphics\window.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\window.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_demo.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_demo.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_draw.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_draw.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_glfw.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_glfw.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_opengl2.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_opengl2.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_impl_opengl3.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_impl_opengl3.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_tables.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_tables.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\imgui\imgui_widgets.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\imgui_widgets.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\main.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\main.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\meshLoaderObj.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\meshLoaderObj.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\mesh.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\mesh.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\object.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\object.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Shaders\shader.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\shader.obj
+C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Model Loading\texture.cpp;C:\Users\Andy\Documents\GitHub\Proiect-ACG\Game_Engine\GameEngine\GameEngine\Debug\texture.obj

@@ -14,6 +14,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <cstdio>
 
 #include <windows.h>
 
@@ -21,6 +22,10 @@ const int MAX_SCENES = 3;
 
 bool mainQuestCompleted = false;
 bool aliveInThisWorld = false;
+bool gameStarted = false;
+int gameStage = 0;
+int mainQuestItemsFound = 0;
+
 int realmCounter = 0;
 
 glm::vec2 mousePos = glm::vec2(0.0f);
@@ -35,30 +40,76 @@ void processKeyboardInput(Scene& scene);
 //void processKeyboardInput();
 void processMouseMove();
 void processMouseMove2(GLFWwindow* window, Camera& camera, glm::vec2& lastMousePos);
+
+//std::unordered_map<int, FILE*> files;
+//FILE* files[];
+std::vector<FILE*> files;
+
+FILE* stream;
+errno_t err = fopen_s(&stream, "Resources/Text/introduction.txt", "r");
+
+
+FILE* stream1;
+errno_t err1 = fopen_s(&stream1, "Resources/Text/test.txt", "r");
+
+// Open for read (will fail if file "test.in" doesn't exist)
+//err = fopen_s(&stream, "Resources/test.in", "r");
+char myString[1001];
+
+void readFromFile(FILE* stream) {
+
+	char line[300 + 1] = "";  /* initialize all to 0 ('\0') */
+
+	while (fgets(line, sizeof(line), stream)) { 
+		strcat_s(myString, line);
+	}
+}
+void emptyMyString() {
+	strcpy_s(myString, "");
+}
+
+void closeMyFile(FILE* stream) {
+	fclose(stream);
+}
 void RenderQuestUI()
 {
-	// Inside the game loop, after starting ImGui frame
+	//readFromFile(files[gameStage]);
 	ImGui::Begin("Quests & Story");
 
-	// Main Quest
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Main Quest - %s", mainQuestCompleted ? "Completed" : "Not Completed");
-	//ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Status: %s", mainQuestCompleted ? "Completed" : "Not Completed");
+	if (gameStarted == true && gameStage == 2) {
 
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("Main Quest: Find the lost pages of Enchiridion.");
-	
-	// Side quests
-	ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Side quests");
-	
-	if (ImGui::IsItemHovered())
-		ImGui::SetTooltip("Side Quest: Search for maggots under the box.");
+		// Main Quest
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Main Quest - %s", mainQuestCompleted ? "Completed" : "Not Completed");
+		//ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Status: %s", mainQuestCompleted ? "Completed" : "Not Completed");
 
-	if(aliveInThisWorld == false)
-		ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Press Enter to make \nyour presence felt.");
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Main Quest: Find the lost pages of Enchiridion. - %d / 4", mainQuestItemsFound);
 
+		// Side quests
+		ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Side quests");
+
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Side Quest: Search for maggots under the box.");
+
+		if (aliveInThisWorld == false)
+			ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Press Enter to make \nyour presence felt.");
+	}
+	else {
+		readFromFile(files[gameStage]);
+		//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", text);
+		ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", myString);
+		//printf("%s", myString);
+
+		if (ImGui::Button("Thanks bro!")) {
+			gameStarted = true;
+			closeMyFile(files[gameStage]);
+			gameStage++;
+			emptyMyString();
+			Sleep(400);
+		}
+	}
 	//make text bigger
 	ImGui::SetWindowFontScale(1.24);
-
 	// End ImGui window
 	ImGui::End();
 }
@@ -88,7 +139,9 @@ bool isWithinPickupDistance(Camera& camera, Mesh& object, float pickupDistance) 
 
 int main()
 {
-	
+	files.push_back(stream);
+	files.push_back(stream1);
+
 	//Initialize ImGui
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -261,6 +314,12 @@ int main()
 	//Mesh santa = loader.loadObj("Resources/Models/ChocoSantaClaus06.obj", textures6);
 	skybox.setup();
 	
+	std::vector<Mesh> planeMeshes;
+	Mesh plane1= loader.loadObj("Resources/Models/plane.obj", textures3);
+	planeMeshes.push_back(plane1);
+	planeMeshes.push_back(plane1);
+	planeMeshes.push_back(plane1);
+	planeMeshes.push_back(plane1);
 
 	// Animation time
 	float snowflakeAnimationTime = 0.0f;
@@ -386,7 +445,11 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		processKeyboardInput(*currentScene);
+		if (gameStarted == true) {
+			processKeyboardInput(*currentScene);
+			processMouseMove2(window.getWindow(), camera, lastMousePos);
+		}
+		//processKeyboardInput(*currentScene);
 		//processKeyboardInput();
 		/*double xpos, ypos;
 		window.getMousePos(xpos, ypos);
@@ -396,7 +459,7 @@ int main()
 			processMouseMove();
 			lastMousePos = mousePos;
 		}*/
-		processMouseMove2(window.getWindow(), camera, lastMousePos);
+		//processMouseMove2(window.getWindow(), camera, lastMousePos);
 
 		// Update camera position based on keyboard input
 		//processKeyboardInput();
@@ -506,7 +569,9 @@ int main()
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
-		plane.draw(shader);
+		//plane.draw(shader);
+		planeMeshes[realmCounter].draw(shader);
+		//skybox.draw2(skyboxShader, cubemapTextures[realmCounter]);
 
 		currentScene->Draw();
 
