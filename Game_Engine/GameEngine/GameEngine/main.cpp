@@ -131,19 +131,45 @@ int main()
 	//declare a vector of faces
 	std::vector<std::string> faces
 	{
-		//"Resources/Textures/posx.jpg",
-		//"Resources/Textures/negx.jpg",
-		//"Resources/Textures/posy.jpg",
-		//"Resources/Textures/negy.jpg",
-		//"Resources/Textures/posz.jpg",
-		//"Resources/Textures/negz.jpg"
+		"Resources/Textures/right_ice.jpg",
+		"Resources/Textures/left_ice.jpg",
+		"Resources/Textures/top_ice.jpg",
+		"Resources/Textures/bottom_ice.jpg",
+		"Resources/Textures/front_ice.jpg",
+		"Resources/Textures/back_ice.jpg"
 
-		"Resources/Textures/rightF2.jpg",
-		"Resources/Textures/leftF2.jpg",
-		"Resources/Textures/topF2.jpg",
-		"Resources/Textures/bottomF2.jpg",
-		"Resources/Textures/frontF2.jpg",
-		"Resources/Textures/backF2.jpg"
+
+		/*"Resources/Textures/right_slime2.jpg",
+		"Resources/Textures/left_slime2.jpg",
+		"Resources/Textures/top_slime2.jpg",
+		"Resources/Textures/bottom_slime2.jpg",
+		"Resources/Textures/front_slime2.jpg",
+		"Resources/Textures/back_slime2.jpg"
+		*/
+
+		/*"Resources/Textures/right_vf.jpg",
+		"Resources/Textures/left_vf.jpg",
+		"Resources/Textures/top_vf.jpg",
+		"Resources/Textures/bottom_vf.jpg",
+		"Resources/Textures/front_vf.jpg",
+		"Resources/Textures/back_vf.jpg"
+		*/
+
+		/*"Resources/Textures/right_candy2.jpg",
+		"Resources/Textures/left_candy2.jpg",
+		"Resources/Textures/top_candy2.jpg",
+		"Resources/Textures/bottom_candy2.jpg",
+		"Resources/Textures/front_candy2.jpg",
+		"Resources/Textures/back_candy2.jpg"
+		*/
+
+		/*"Resources/Textures/right_fire.jpg",
+		"Resources/Textures/left_fire.jpg",
+		"Resources/Textures/top_fire.jpg",
+		"Resources/Textures/bottom_fire.jpg",
+		"Resources/Textures/front_fire.jpg",
+		"Resources/Textures/back_fire.jpg"
+		*/
 	};
 	std::vector<std::string> faces1
 	{
