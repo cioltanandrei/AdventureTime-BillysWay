@@ -141,6 +141,9 @@
     <Image Include="Resources\Textures\rock.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="C:\Users\stefa\Downloads\OBJECTS\OBJECTS\FINN%27S HOME\trunks.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Object Include="Resources\Models\sphere.obj" />

@@ -32,6 +32,7 @@ int realmCounter = 0;
 const int MAX_GAME_STAGES = 15;
 
 std::vector<bool> hasInteractedWithSceneNPC;
+bool here = false;
 std::vector<Object> interactedObjects;
 //std::vector<string> Collectables;
 //std::unordered_map<std::string, int> Collectables;
@@ -71,6 +72,64 @@ errno_t err2 = fopen_s(&stream2, "Resources/Text/test1.txt", "r");
 
 FILE* stream3;
 errno_t err3 = fopen_s(&stream3, "Resources/Text/test2.txt", "r");
+
+FILE* stream4;
+errno_t err4 = fopen_s(&stream4, "Resources/Text/test3.txt", "r");
+
+FILE* stream5;
+errno_t err5 = fopen_s(&stream5, "Resources/Text/test4.txt", "r");
+
+FILE* stream6;
+errno_t err6 = fopen_s(&stream6, "Resources/Text/test5.txt", "r");
+
+FILE* stream7;
+errno_t err7 = fopen_s(&stream7, "Resources/Text/test6.txt", "r");
+
+FILE* stream8;
+errno_t err8 = fopen_s(&stream8, "Resources/Text/test7.txt", "r");
+
+FILE* stream9;
+errno_t err9 = fopen_s(&stream9, "Resources/Text/test8.txt", "r");
+
+FILE* stream10;
+errno_t err10 = fopen_s(&stream10, "Resources/Text/test9.txt", "r");
+
+FILE* stream11;
+errno_t err11 = fopen_s(&stream11, "Resources/Text/test10.txt", "r");
+
+FILE* stream12;
+errno_t err12 = fopen_s(&stream12, "Resources/Text/test11.txt", "r");
+
+FILE* stream13;
+errno_t err13 = fopen_s(&stream13, "Resources/Text/test12.txt", "r");
+
+FILE* stream14;
+errno_t err14 = fopen_s(&stream14, "Resources/Text/test13.txt", "r");
+
+FILE* stream15;
+errno_t err15 = fopen_s(&stream15, "Resources/Text/test14.txt", "r");
+
+FILE* stream16;
+errno_t err16 = fopen_s(&stream16, "Resources/Text/test15.txt", "r");
+
+FILE* stream17;
+errno_t err17 = fopen_s(&stream17, "Resources/Text/test16.txt", "r");
+
+FILE* stream18;
+errno_t err18 = fopen_s(&stream18, "Resources/Text/test17.txt", "r");
+
+FILE* stream19;
+errno_t err19 = fopen_s(&stream19, "Resources/Text/test18.txt", "r");
+
+FILE* stream20;
+errno_t err20 = fopen_s(&stream20, "Resources/Text/test19.txt", "r");
+
+FILE* stream21;
+errno_t err21 = fopen_s(&stream21, "Resources/Text/test20.txt", "r");
+
+FILE* stream22;
+errno_t err22 = fopen_s(&stream22, "Resources/Text/test21.txt", "r");
+
 
 // Open for read (will fail if file "test.in" doesn't exist)
 //err = fopen_s(&stream, "Resources/test.in", "r");
@@ -135,18 +194,20 @@ void RenderQuestUI()
 		}
 		else {
 			if (hasInteractedWithSceneNPC[realmCounter] == true) {
+				here = true;
 				int fileNo = realmCounter * 2 + 1;
 				readFromFile(files[fileNo]);
 
 				ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s \n Press Enter to cotinue", myString);
-				/*if (ImGui::Button("Ok, bro!")) {
+				if (ImGui::Button("Ok, bro!")) {
 					hasInteractedWithSceneNPC[realmCounter] = false;
 					interactedObjects.clear();
 					Sleep(400);
-				}*/
+					emptyMyString();
+				}
 			}
 			else {
-				if (levelEnded == true) {
+				if (levelEnded == true && here == true) {
 					//emptyMyString();
 					int fileNo = realmCounter * 2 + 2;
 					readFromFile(files[fileNo]);
@@ -247,6 +308,25 @@ int main()
 	files.push_back(stream1);
 	files.push_back(stream2);
 	files.push_back(stream3);
+	files.push_back(stream4);
+	files.push_back(stream5);
+	files.push_back(stream6);
+	files.push_back(stream7);
+	files.push_back(stream8);
+	files.push_back(stream9);
+	files.push_back(stream10);
+	files.push_back(stream11);
+	files.push_back(stream12);
+	files.push_back(stream13);
+	files.push_back(stream14);
+	files.push_back(stream15);
+	files.push_back(stream16);
+	files.push_back(stream17);
+	files.push_back(stream18);
+	files.push_back(stream19);
+	files.push_back(stream20);
+	files.push_back(stream21);
+	files.push_back(stream22);
 
 	//Initialize ImGui
 	IMGUI_CHECKVERSION();
@@ -292,6 +372,10 @@ int main()
 	GLuint tex14 = loadBMP("Resources/Textures/lava2.bmp");
 	GLuint appleID = loadBMP("Resources/Textures/apple.bmp");
 	GLuint treeID = loadBMP("Resources/Textures/wood.bmp");
+	GLuint trunkID = loadBMP("Resources/Textures/trunks.bmp");
+	GLuint flameID = loadBMP("Resources/Textures/flame.bmp");
+	GLuint pageID = loadBMP("Resources/Textures/page.bmp");
+	GLuint candyID = loadBMP("Resources/Textures/candyP.bmp");
 	//GLuint rockID = loadBMP("Resources/Textures/lava.bmp");
 	
 	//declare a vector of faces
@@ -468,6 +552,11 @@ int main()
 	textures12[0].id = tex14;
 	textures12[0].type = "texture_diffuse";
 
+	std::vector<Texture> textures_page;
+	textures_page.push_back(Texture());
+	textures_page[0].id = pageID;
+	textures_page[0].type = "texture_diffuse";
+
 	std::vector<Texture> textures_apple;
 	textures_apple.push_back(Texture());
 	textures_apple[0].id = appleID;
@@ -477,6 +566,21 @@ int main()
 	textures_tree.push_back(Texture());
 	textures_tree[0].id = treeID;
 	textures_tree[0].type = "texture_diffuse";
+
+	std::vector<Texture> textures_trunk;
+	textures_trunk.push_back(Texture());
+	textures_trunk[0].id = trunkID;
+	textures_trunk[0].type = "texture_diffuse";
+
+	std::vector<Texture> textures_flame;
+	textures_flame.push_back(Texture());
+	textures_flame[0].id = flameID;
+	textures_flame[0].type = "texture_diffuse";
+
+	std::vector<Texture> textures_candy;
+	textures_candy.push_back(Texture());
+	textures_candy[0].id = candyID;
+	textures_candy[0].type = "texture_diffuse";
 
 	//std::vector<Texture> textures_rock;
 	//textures_rock.push_back(Texture());
@@ -563,21 +667,21 @@ int main()
 		//treePositions.push_back(glm::vec3(x, y, z));
 		auto collider = new CylinderCollider(3.5, 100);
 		//auto interact1 = new InteractNone(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &interactedObjects); // Interaction that does nothing 
-		auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory); //Interaction that makes the object disappear
+		auto interact = new InteractNo(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory); //Interaction that makes the object disappear
 
 		scenes[0]->AddObject(Object("shader", "tree", glm::vec3(x, y, z), glm::vec3(3.0f), collider, interact));
 
 	}
-
-	scenes[0]->AddMesh("sword", loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5));
-	auto collider = new CylinderCollider(3.5, 100);
-	auto interact1 = new InteractNone(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &interactedObjects);
+	
+	scenes[0]->AddMesh("trunk", loader.loadObj("Resources/Models/Trunks.obj", textures_trunk));
+	auto collider = new CylinderCollider(20, 100);
+	auto interact1 = new InteractNone(new CylinderCollider(40, 100), scenes[0]->GetObjects(), &interactedObjects);
 	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
-	interactiveNPCSInScenes.push_back("sword");
+	interactiveNPCSInScenes.push_back("trunk");
 	hasInteractedWithSceneNPC.push_back(false);
-	Collectables.push_back({ "sword", 1 });
+	Collectables.push_back({ "apple", 1 });
 
-	scenes[0]->AddObject(Object("shader", "sword", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(1.0f), collider, interact1));
+	scenes[0]->AddObject(Object("shader", "trunk", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(75.0f), collider, interact1));
 
 
 	//do the same for the apple
@@ -594,6 +698,23 @@ int main()
 	scenes.push_back(new Scene(&window, &camera));
 	scenes[1]->AddShader("shader", &shader);
 	scenes[1]->AddMesh("tree2", loader.loadObj("Resources/Models/t1.obj", textures4));
+	scenes[1]->AddMesh("gunter", loader.loadObj("Resources/Models/gunter.obj", textures3));
+	auto collider4 = new CylinderCollider(20, 100);
+	auto interact4 = new InteractPickup(new CylinderCollider(40, 100), scenes[1]->GetObjects(), &inventory);
+	scenes[1]->AddObject(Object("shader", "gunter", glm::vec3(80.0f, 5.0f, 0.0f), glm::vec3(10.0f), collider4, interact4));
+	scenes[1]->AddMesh("pepper", loader.loadObj("Resources/Models/pepper.obj",textures3));
+	auto collider3 = new CylinderCollider(20, 100);
+	auto interact3 = new InteractNone(new CylinderCollider(40, 100), scenes[1]->GetObjects(), &interactedObjects);
+	scenes[1]->AddObject(Object("shader", "pepper", glm::vec3(5.0f, 1.0f, 0.0f), glm::vec3(400.0f), collider3, interact3));
+	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
+	interactiveNPCSInScenes.push_back("pepper");
+	hasInteractedWithSceneNPC.push_back(false);
+	hasInteractedWithSceneNPC.push_back(false);
+	hasInteractedWithSceneNPC.push_back(false);
+	hasInteractedWithSceneNPC.push_back(false);
+	hasInteractedWithSceneNPC.push_back(false);
+	Collectables.push_back({ "gunter", 1 });
+	
 	// Generate random tree positions
 	for (int i = 0; i < numTrees; ++i) {
 		float x = getRandomFloat(minX, maxX);
@@ -601,77 +722,72 @@ int main()
 		float z = getRandomFloat(minZ, maxZ);
 		//treePositions.push_back(glm::vec3(x, y, z));
 		auto collider = new CylinderCollider(3.5, 100);
-		auto interact1 = new InteractNone(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &interactedObjects); // Interaction that does nothing 
+		auto interact1 = new InteractNo(new CylinderCollider(7, 100), scenes[1]->GetObjects(), &interactedObjects); // Interaction that does nothing 
 		//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory); //Interaction that makes the object disappear
 
 		scenes[1]->AddObject(Object("shader", "tree2", glm::vec3(x, y, z), glm::vec3(0.05f), collider, interact1));
 	}
-	
-	//scenes[1]->AddMesh("box", loader.loadObj("Resources/Models/cube.obj", textures5));
-	
-	//auto collider = new CylinderCollider(3.5, 100);
-	//auto interact = new InteractNone(new CylinderCollider(7, 100));
-	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[1]->GetObjects(), &inventory);
-
-	//scenes[1]->AddObject(Object("shader", "box", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(1.0f), collider, interact));
-
 	/////////////// END OF THE SECOND SCENE ///////////////
 
 
 
 	/////////////// CREATING THE THIRD SCENE ///////////////
-	
 	scenes.push_back(new Scene(&window, &camera));
-	//scenes[2]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
 	scenes[2]->AddShader("shader", &shader);
-	//auto collider = new CylinderCollider(3.5, 100);
-	//auto interact = new InteractNone(new CylinderCollider(7, 100));
-	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[2]->GetObjects(), &inventory);
-
-	//scenes[2]->AddObject(Object("shader", "tree", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(0.05f), collider, interact));
-
+	scenes[2]->AddMesh("diamond2", loader.loadObj("Resources/Models/diamond2.obj", textures_apple));
+	//////
+	auto collider5 = new CylinderCollider(20, 100);
+	auto interact5 = new InteractPickup(new CylinderCollider(40, 100), scenes[2]->GetObjects(), &inventory);
+	scenes[2]->AddObject(Object("shader", "diamond2", glm::vec3(45.0f, 2.0f, 0.0f), glm::vec3(0.199f), collider5, interact5));
+	scenes[2]->AddMesh("slime", loader.loadObj("Resources/Models/slime.obj", textures_apple));
+	auto collider6 = new CylinderCollider(20, 100);
+	auto interact6 = new InteractNone(new CylinderCollider(40, 100), scenes[2]->GetObjects(), &interactedObjects);
+	scenes[2]->AddObject(Object("shader", "slime", glm::vec3(80.0f, 0.0f, 15.0f), glm::vec3(10.0f), collider6, interact6));
+	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
+	interactiveNPCSInScenes.push_back("slime");
+	hasInteractedWithSceneNPC.push_back(false);
+	Collectables.push_back({ "diamond2", 1 });
 	/////////////// END OF THE THIRD SCENE ///////////////
 
 
 
 	/////////////// CREATING THE FOURTH SCENE ///////////////
+	
 	scenes.push_back(new Scene(&window, &camera));
-	
 	scenes[3]->AddShader("shader", &shader);
+	scenes[3]->AddMesh("fp", loader.loadObj("Resources/Models/FP.obj", textures_flame));
 	
-
-
-	/*scenes.push_back(new Scene(&window, &camera));
-	scenes[3]->AddShader("shader", &shader);
-	scenes[3]->AddMesh("rock", loader.loadObj("Resources/Models/stone.obj", textures_rock));
-	// Generate random tree positions
-	for (int i = 0; i < numTrees; ++i) {
-		float x = getRandomFloat(minX, maxX);
-		float y = getRandomFloat(minY, maxY);
-		float z = getRandomFloat(minZ, maxZ);
-		//treePositions.push_back(glm::vec3(x, y, z));
-		auto collider = new CylinderCollider(3.5, 100);
-		auto interact1 = new InteractNone(new CylinderCollider(7, 100)); // Interaction that does nothing 
-		//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory); //Interaction that makes the object disappear
-
-		scenes[3]->AddObject(Object("shader", "rock", glm::vec3(x, y, z), glm::vec3(2.0f), collider, interact1));
-	}
-	*/
-
-	//scenes[3]->AddMesh("CandyCorn", loader.loadObj("Resources/Models/CandyCornOBJ.obj", textures7));
-	//scenes[3]->AddShader("shader", &shader);
-	//collider = new CylinderCollider(3.5, 100);
-	//auto interact = new InteractNone(new CylinderCollider(7, 100));
-	//interact = new InteractPickup(new CylinderCollider(7, 100), scenes[3]->GetObjects(), &inventory);
-
-	//scenes[3]->AddObject(Object("shader", "CandyCorn", glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(50.0f), collider, interact));
+	auto collider7 = new CylinderCollider(20, 100);
+	auto interact7 = new InteractPickup(new CylinderCollider(40, 100), scenes[3]->GetObjects(), &inventory);
+	scenes[3]->AddObject(Object("shader", "fp", glm::vec3(55.0f, 5.0f, 10.0f), glm::vec3(3.0f), collider7, interact7));
+	scenes[3]->AddMesh("fire", loader.loadObj("Resources/Models/fire.obj", textures_flame));
+	auto collider8 = new CylinderCollider(20, 100);
+	auto interact8 = new InteractNone(new CylinderCollider(40, 100), scenes[3]->GetObjects(), &interactedObjects);
+	scenes[3]->AddObject(Object("shader", "fire", glm::vec3(45.0f, 0.0f, 10.0f), glm::vec3(4000.0f), collider8, interact8));
+	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
+	interactiveNPCSInScenes.push_back("fire");
+	hasInteractedWithSceneNPC.push_back(false);
+	Collectables.push_back({ "fp", 1 });
 
 	/////////////// END OF THE FOURTH SCENE ///////////////
 
 	/////////////// CREATING THE FIFTH SCENE ///////////////
 	scenes.push_back(new Scene(&window, &camera));
-	//scenes[4]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
 	scenes[4]->AddShader("shader", &shader);
+	scenes[4]->AddMesh("pb", loader.loadObj("Resources/Models/candyP.obj", textures_candy));
+	auto collider9 = new CylinderCollider(20, 100);
+	auto interact9 = new InteractNone(new CylinderCollider(40, 100), scenes[4]->GetObjects(), &interactedObjects);
+	scenes[4]->AddObject(Object("shader", "pb", glm::vec3(45.0f, 0.0f, 0.0f), glm::vec3(15.0f), collider9, interact9));
+	scenes[4]->AddMesh("page",loader.loadObj("Resources/Models/page.obj", textures_page));
+	auto collider10 = new CylinderCollider(20, 100);
+	auto interact10 = new InteractPickup(new CylinderCollider(40, 100), scenes[4]->GetObjects(), &inventory);
+	scenes[4]->AddObject(Object("shader", "page", glm::vec3(80.0f, 0.0f, 15.0f), glm::vec3(50.0f), collider10, interact10));
+	interactiveNPCSInScenes.push_back("pb");
+	hasInteractedWithSceneNPC.push_back(false);
+	Collectables.push_back({ "page", 1 });
+
+
+	
 	//collider = new CylinderCollider(3.5, 100);
 	//auto interact = new InteractNone(new CylinderCollider(7, 100));
 	//interact = new InteractPickup(new CylinderCollider(7, 100), scenes[4]->GetObjects(), &inventory);
@@ -713,6 +829,7 @@ int main()
 		if (inventory.size() == Collectables[realmCounter].howMany) {
 			levelEnded = true;
 			mainQuestItemsFound++;
+			inventory.clear();
 		}
 			//Collectables.find(Collectables.begin(), Collectables.end(), obj.meshName);
 			//std::find(Collectables.begin(), Collectables.end(), obj.meshName);
@@ -847,7 +964,15 @@ int main()
 	
 
 		///// Test plane Obj file //////
-		shader.use();
+		//if(realmCounter == 3)
+		//{ 
+		//	waveShader.use();
+			
+		//}
+		//else
+		//{
+			shader.use();
+		//}
 		ModelMatrix = glm::mat4(1.0);
 		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
 		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(600.0f, 600.0f, 600.0f));
@@ -858,11 +983,18 @@ int main()
 		glUniform3f(glGetUniformLocation(shader.getId(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 		glUniform3f(glGetUniformLocation(shader.getId(), "viewPos"), camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 		//plane.draw(shader);
-		planeMeshes[realmCounter].draw(shader);
+	//	if (realmCounter == 3)
+		//{
+		//	planeMeshes[realmCounter].draw(waveShader);
+		//}
+		//else
+	//	{
+			planeMeshes[realmCounter].draw(shader);
+		//}
+		
 		//skybox.draw2(skyboxShader, cubemapTextures[realmCounter]);
 
 		currentScene->Draw();
-
 		///// Test Obj files for box ////
 		
 		//Test for multiple Obj loading = trees
@@ -1106,12 +1238,13 @@ void processKeyboardInput(Scene &scene)
 	if (window.isPressed(GLFW_KEY_D))
 		camera.keyboardMoveRight(cameraSpeed);
 
-	if (window.isPressed(GLFW_KEY_ENTER)) {
+	if (window.isPressed(GLFW_KEY_ENTER) && here == true && levelEnded == true) {
 		emptyMyString();
 		hasInteractedWithSceneNPC[realmCounter] = false;
 		interactedObjects.clear();
 		Sleep(400);
 		if (levelEnded == true) {
+			here = false;
 			levelEnded = false;
 			gameStage = 1;
 			if (realmCounter < MAX_SCENES)
