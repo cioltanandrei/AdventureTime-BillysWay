@@ -179,7 +179,10 @@ int main()
 
 	GLuint tex9 = loadBMP("Resources/Textures/fantasy_sword.bmp");
 	GLuint tex10 = loadBMP("Resources/Textures/snowflake (2).bmp");
-
+	GLuint tex11 = loadBMP("Resources/Textures/slime.bmp");
+	GLuint tex12 = loadBMP("Resources/Textures/pink.bmp");
+	GLuint tex13 = loadBMP("Resources/Textures/grass2.bmp");
+	GLuint tex14 = loadBMP("Resources/Textures/lava2.bmp");
 	
 	//declare a vector of faces
 	std::vector<std::string> faces_ice
@@ -335,6 +338,26 @@ int main()
 	textures7[0].id = tex7;
 	textures7[0].type = "texture_diffuse";
 
+	std::vector<Texture> textures9;
+	textures9.push_back(Texture());
+	textures9[0].id = tex11;
+	textures9[0].type = "texture_diffuse";
+
+	std::vector<Texture> textures10;
+	textures10.push_back(Texture());
+	textures10[0].id = tex12;
+	textures10[0].type = "texture_diffuse";
+
+	std::vector<Texture> textures11;
+	textures11.push_back(Texture());
+	textures11[0].id = tex13;
+	textures11[0].type = "texture_diffuse";
+
+	std::vector<Texture> textures12;
+	textures12.push_back(Texture());
+	textures12[0].id = tex14;
+	textures12[0].type = "texture_diffuse";
+
 	Mesh mesh(vert, ind, textures3);
 
 
@@ -344,7 +367,10 @@ int main()
 	Mesh sun = loader.loadObj("Resources/Models/sphere.obj");
 	Mesh box = loader.loadObj("Resources/Models/cube.obj", textures);
 	
-	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
+	//Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
+	
+
+
 	Mesh skybox_ice = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
 	Mesh skybox_slime = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap1);
 	Mesh skybox_finn = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap2);
@@ -353,16 +379,24 @@ int main()
 	//Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
 	Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
 	Mesh snowflake = loader.loadObj("Resources/Models/snowflake.obj",textures8);
+	
 	//Mesh santa = loader.loadObj("Resources/Models/ChocoSantaClaus06.obj", textures6);
 	skybox_ice.setup();
 	
 	std::vector<Mesh> planeMeshes;
-	Mesh plane1= loader.loadObj("Resources/Models/plane.obj", textures3);
-	planeMeshes.push_back(plane1);
-	planeMeshes.push_back(plane1);
-	planeMeshes.push_back(plane1);
-	planeMeshes.push_back(plane1);
-	planeMeshes.push_back(plane1);
+	Mesh plane_ice= loader.loadObj("Resources/Models/plane.obj", textures3);
+	Mesh plane_slime = loader.loadObj("Resources/Models/plane.obj", textures9);
+	Mesh plane_candy = loader.loadObj("Resources/Models/plane.obj", textures10);
+	Mesh plane_finn = loader.loadObj("Resources/Models/plane.obj", textures11);
+	Mesh plane_fire = loader.loadObj("Resources/Models/plane.obj", textures12);
+	planeMeshes.push_back(plane_ice);
+	planeMeshes.push_back(plane_slime);
+	planeMeshes.push_back(plane_finn);
+	planeMeshes.push_back(plane_candy);
+	planeMeshes.push_back(plane_fire);
+	//planeMeshes.push_back(plane1);
+	//planeMeshes.push_back(plane1);
+	//planeMeshes.push_back(plane1);
 
 	// Animation time
 	float snowflakeAnimationTime = 0.0f;
