@@ -23,10 +23,24 @@ const int MAX_SCENES = 5;
 bool mainQuestCompleted = false;
 bool aliveInThisWorld = false;
 bool gameStarted = false;
+bool levelEnded = false;
 int gameStage = 0;
 int mainQuestItemsFound = 0;
 
 int realmCounter = 0;
+
+const int MAX_GAME_STAGES = 15;
+
+std::vector<bool> hasInteractedWithSceneNPC;
+std::vector<Object> interactedObjects;
+//std::vector<string> Collectables;
+//std::unordered_map<std::string, int> Collectables;
+
+struct dataAboutCollectables {
+	std::string name;
+	int howMany;
+};
+std::vector<dataAboutCollectables> Collectables;
 
 glm::vec2 mousePos = glm::vec2(0.0f);
 glm::vec2 lastMousePos = glm::vec2(0.0f);
@@ -52,60 +66,150 @@ errno_t err = fopen_s(&stream, "Resources/Text/introduction.txt", "r");
 FILE* stream1;
 errno_t err1 = fopen_s(&stream1, "Resources/Text/test.txt", "r");
 
+FILE* stream2;
+errno_t err2 = fopen_s(&stream2, "Resources/Text/test1.txt", "r");
+
+FILE* stream3;
+errno_t err3 = fopen_s(&stream3, "Resources/Text/test2.txt", "r");
+
 // Open for read (will fail if file "test.in" doesn't exist)
 //err = fopen_s(&stream, "Resources/test.in", "r");
-char myString[1001];
+char myString[100001];
+
+void emptyMyString() {
+	strcpy_s(myString, " ");
+}
 
 void readFromFile(FILE* stream) {
-
 	char line[300 + 1] = "";  /* initialize all to 0 ('\0') */
 
 	while (fgets(line, sizeof(line), stream)) { 
 		strcat_s(myString, line);
 	}
 }
-void emptyMyString() {
-	strcpy_s(myString, "");
-}
 
 void closeMyFile(FILE* stream) {
 	fclose(stream);
 }
+
+
 void RenderQuestUI()
 {
 	//readFromFile(files[gameStage]);
 	ImGui::Begin("Quests & Story");
 
-	if (gameStarted == true && gameStage == 2) {
-
-		// Main Quest
-		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Main Quest - %s", mainQuestCompleted ? "Completed" : "Not Completed");
-		//ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Status: %s", mainQuestCompleted ? "Completed" : "Not Completed");
-
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Main Quest: Find the lost pages of Enchiridion. - %d / 4", mainQuestItemsFound);
-
-		// Side quests
-		ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Side quests");
-
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Side Quest: Search for maggots under the box.");
-
-		if (aliveInThisWorld == false)
-			ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Press Enter to make \nyour presence felt.");
-	}
-	else {
-		readFromFile(files[gameStage]);
+	//if (gameStarted == true && gameStage == 2) {
+	if (gameStarted == false) {
+		readFromFile(files[0]);
 		//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", text);
 		ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", myString);
 		//printf("%s", myString);
 
 		if (ImGui::Button("Thanks bro!")) {
 			gameStarted = true;
-			closeMyFile(files[gameStage]);
+			closeMyFile(files[0]);
 			gameStage++;
 			emptyMyString();
+			//hasInteractedWithSceneNPC[realmCounter] = false;
+			//interactedObjects.clear();
 			Sleep(400);
+		}
+	}
+	else {
+		if (hasInteractedWithSceneNPC[realmCounter] == false && levelEnded == false) {
+			// Main Quest
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Main Quest - %s", mainQuestCompleted ? "Completed" : "Not Completed");
+			//ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 1.0f), "Status: %s", mainQuestCompleted ? "Completed" : "Not Completed");
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Main Quest: Find the lost pages of Enchiridion. - %d / 5", mainQuestItemsFound);
+
+			// Side quests
+			ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Side quests");
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Side Quest: Search for maggots under the box.");
+
+			if (aliveInThisWorld == false)
+				ImGui::TextColored(ImVec4(0.5, 0.5f, 0.5f, 1.0f), "Press Enter to make \nyour presence felt.");
+		}
+		else {
+			if (hasInteractedWithSceneNPC[realmCounter] == true) {
+				int fileNo = realmCounter * 2 + 1;
+				readFromFile(files[fileNo]);
+
+				ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s \n Press Enter to cotinue", myString);
+				/*if (ImGui::Button("Ok, bro!")) {
+					hasInteractedWithSceneNPC[realmCounter] = false;
+					interactedObjects.clear();
+					Sleep(400);
+				}*/
+			}
+			else {
+				if (levelEnded == true) {
+					//emptyMyString();
+					int fileNo = realmCounter * 2 + 2;
+					readFromFile(files[fileNo]);
+					char testt[10001];
+					ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s \n Press Enter to cotinue", myString);
+					//ImGui::InputText("", myString, size(myString));
+					printf("%s", myString);
+					//ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", myString);
+					/*if (ImGui::Button("Ok, bro!")) {
+						hasInteractedWithSceneNPC[realmCounter] = false;
+						interactedObjects.clear();
+						Sleep(400);
+						levelEnded = false;
+						gameStage = 1;
+						if (realmCounter < MAX_SCENES)
+							realmCounter++;
+					}*/
+				}
+			}
+			/*int fileNo = 0;
+			//if (hasInteractedWithSceneNPC[realmCounter] == true)
+				fileNo = realmCounter * 2 + 1;
+			//else {
+			if (levelEnded == true) {
+					emptyMyString();
+					fileNo++;
+				}
+			printf("FILE %d ",fileNo);
+			//}
+			//if (gameStage == 2 && levelEnded == false)
+				//gameStage = 1;
+			
+			//readFromFile(files[realmCounter + 1]);
+			//if(sizeof(myString) / sizeof(char) == 0)
+			if ((fileNo % 2  == 1 && firstTime == true) || fileNo % 2 == 0) {
+				readFromFile(files[fileNo]);
+				firstTime = false;
+			}
+			//ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", text);
+			ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", myString);
+			//printf("%s", myString);
+			//if (hasInteractedWithSceneNPC[realmCounter] == true)
+				//gameStage--;
+
+			if (ImGui::Button("Ok, bro!")) {
+				//gameStarted = true;
+				//closeMyFile(files[realmCounter + 1]);
+				//if(gameStage % 2 != 0)
+					//gameStage++;
+				//emptyMyString();
+				hasInteractedWithSceneNPC[realmCounter] = false;
+				interactedObjects.clear();
+				Sleep(400);
+				if (levelEnded == true) {
+					closeMyFile(files[fileNo]);
+					emptyMyString();
+					levelEnded = false;
+					gameStage = 1;
+					if(realmCounter < MAX_SCENES)
+						realmCounter++;
+				}
+			}
+			*/
 		}
 	}
 	//make text bigger
@@ -141,6 +245,8 @@ int main()
 {
 	files.push_back(stream);
 	files.push_back(stream1);
+	files.push_back(stream2);
+	files.push_back(stream3);
 
 	//Initialize ImGui
 	IMGUI_CHECKVERSION();
@@ -180,7 +286,7 @@ int main()
 	GLuint tex9 = loadBMP("Resources/Textures/fantasy_sword.bmp");
 	GLuint tex10 = loadBMP("Resources/Textures/snowflake (2).bmp");
 
-	
+
 	//declare a vector of faces
 	std::vector<std::string> faces_ice
 	{
@@ -226,7 +332,7 @@ int main()
 		"Resources/Textures/front_fire.jpg",
 		"Resources/Textures/back_fire.jpg"
 	};
-	
+
 
 	GLuint cubemapTexture = loadCubemap(faces_ice);
 	GLuint cubemapTexture1 = loadCubemap(faces_slime);
@@ -343,7 +449,7 @@ int main()
 	MeshLoaderObj loader;
 	Mesh sun = loader.loadObj("Resources/Models/sphere.obj");
 	Mesh box = loader.loadObj("Resources/Models/cube.obj", textures);
-	
+
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
 	Mesh skybox_ice = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
 	Mesh skybox_slime = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap1);
@@ -352,12 +458,12 @@ int main()
 	Mesh skybox_fire = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap4);
 	//Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
 	Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
-	Mesh snowflake = loader.loadObj("Resources/Models/snowflake.obj",textures8);
+	Mesh snowflake = loader.loadObj("Resources/Models/snowflake.obj", textures8);
 	//Mesh santa = loader.loadObj("Resources/Models/ChocoSantaClaus06.obj", textures6);
 	skybox_ice.setup();
-	
+
 	std::vector<Mesh> planeMeshes;
-	Mesh plane1= loader.loadObj("Resources/Models/plane.obj", textures3);
+	Mesh plane1 = loader.loadObj("Resources/Models/plane.obj", textures3);
 	planeMeshes.push_back(plane1);
 	planeMeshes.push_back(plane1);
 	planeMeshes.push_back(plane1);
@@ -368,17 +474,18 @@ int main()
 	float snowflakeAnimationTime = 0.0f;
 	//// SCENE ______________________________
 	//std::vector<Scene> scenes; 
-	std::vector<Scene*> scenes; 
+	std::vector<Scene*> scenes;
 	std::vector<Object> inventory;
+	std::vector<string> interactiveNPCSInScenes;
 
 	//int realmCounter = 0;
-	
+
 	/////////////// CREATING THE FIRST SCENE ///////////////
 
 	scenes.push_back(new Scene(&window, &camera));
 	scenes[0]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
 	scenes[0]->AddShader("shader", &shader);
-	
+
 
 
 	// Seed the random number generator
@@ -414,11 +521,15 @@ int main()
 
 	scenes[0]->AddMesh("sword", loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5));
 	auto collider = new CylinderCollider(3.5, 100);
-	auto interact1 = new InteractNone(new CylinderCollider(7, 100));
+	auto interact1 = new InteractNone(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &interactedObjects);
 	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
-	
+
 	scenes[0]->AddObject(Object("shader", "sword", glm::vec3(10.0f, -3.0f, 0.0f), glm::vec3(1.0f), collider, interact1));
 
+	interactiveNPCSInScenes.push_back("sword");
+	hasInteractedWithSceneNPC.push_back(false);
+	Collectables.push_back({"sword", 1});
+	//Collectables["sword"] = 1; /// how many swords do i need to collect
 	//Scene* currentScene = &scenes[0];
 	/////////////// END OF THE FIRST SCENE ///////////////
 	
@@ -494,6 +605,40 @@ int main()
 		glfwWindowShouldClose(window.getWindow()) == 0)
 	{
 		currentScene = scenes[realmCounter];
+		for (auto obj : interactedObjects) {
+			if (obj.meshName == interactiveNPCSInScenes[realmCounter]) {
+				hasInteractedWithSceneNPC[realmCounter] = true;
+			}
+			/*if (gameStage <= MAX_GAME_STAGES) {
+				if(gameStage >=1 && gameStage <= 3)
+				if (obj.meshName == "sword" && gameStage >= 1 && gameStage <= 3) {
+					gameStage++;
+				}
+				if (obj.meshName == "tree" && gameStage >= 1 && gameStage <= 3) {
+					gameStage++;
+				}
+			}*/
+			/*if (obj.interactable->GetCollider()->IsColliding(obj.pos, pos)) {
+				obj.interactable->Interact(obj);
+			}*/
+		}
+		/*
+		for (auto obj : inventory) {
+			if (obj.meshName == Collectables[realmCounter].name) {
+
+			}
+		}*/
+		if (inventory.size() == Collectables[realmCounter].howMany) {
+			levelEnded = true;
+			mainQuestItemsFound++;
+		}
+			//Collectables.find(Collectables.begin(), Collectables.end(), obj.meshName);
+			//std::find(Collectables.begin(), Collectables.end(), obj.meshName);
+			//std::unordered_map<std::string, int>::const_iterator got = Collectables.find(obj.meshName);
+			//if(got->second == )
+			//if(obj.meshName == Collectables[realmCounter])
+		//if (gameStage % 3 == 0)
+			//interactedObjects.clear();
 		window.clear();
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -870,10 +1015,20 @@ void processKeyboardInput(Scene &scene)
 		camera.keyboardMoveRight(cameraSpeed);
 
 	if (window.isPressed(GLFW_KEY_ENTER)) {
-		aliveInThisWorld = true;
+		emptyMyString();
+		hasInteractedWithSceneNPC[realmCounter] = false;
+		interactedObjects.clear();
+		Sleep(400);
+		if (levelEnded == true) {
+			levelEnded = false;
+			gameStage = 1;
+			if (realmCounter < MAX_SCENES)
+				realmCounter++;
+		}
+		/*aliveInThisWorld = true;
 		mainQuestCompleted = true;
 		if(realmCounter < MAX_SCENES)
-			realmCounter++;
+			realmCounter++;*/
 		Sleep(400);
 	}
 

@@ -85,7 +85,7 @@ public:
 			interactable == other.interactable;
 	}
 };
-
+/*
 class InteractNone : public Interactable {
 public:
 	InteractNone(Collider* collider) : Interactable(collider) {}
@@ -93,7 +93,25 @@ public:
 		printf("Object interacted");
 	}
 };
+*/
 
+class InteractNone : public Interactable {
+private:
+	std::vector<Object>* objects;
+	std::vector<Object>* pickupLocation;
+
+public:
+	InteractNone(Collider* collider, std::vector<Object>* objects,
+		std::vector<Object>* pickupLocation) : Interactable(collider),
+		objects(objects), pickupLocation(pickupLocation) {}
+
+
+	virtual void Interact(Object obj) override {
+		auto pos = std::find(objects->begin(), objects->end(), obj);
+		pickupLocation->push_back(obj);
+		//objects->erase(pos);
+	}
+};
 class InteractPickup : public Interactable {
 private:
 	std::vector<Object> *objects;
