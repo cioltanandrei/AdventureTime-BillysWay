@@ -18,7 +18,7 @@
 
 #include <windows.h>
 
-const int MAX_SCENES = 3;
+const int MAX_SCENES = 5;
 
 bool mainQuestCompleted = false;
 bool aliveInThisWorld = false;
@@ -182,7 +182,7 @@ int main()
 
 	
 	//declare a vector of faces
-	std::vector<std::string> faces
+	std::vector<std::string> faces_ice
 	{
 		"Resources/Textures/right_ice.jpg",
 		"Resources/Textures/left_ice.jpg",
@@ -190,57 +190,55 @@ int main()
 		"Resources/Textures/bottom_ice.jpg",
 		"Resources/Textures/front_ice.jpg",
 		"Resources/Textures/back_ice.jpg"
-
-
-		/*"Resources/Textures/right_slime2.jpg",
+	};
+	std::vector<std::string> faces_slime
+	{
+		"Resources/Textures/right_slime2.jpg",
 		"Resources/Textures/left_slime2.jpg",
 		"Resources/Textures/top_slime2.jpg",
 		"Resources/Textures/bottom_slime2.jpg",
 		"Resources/Textures/front_slime2.jpg",
 		"Resources/Textures/back_slime2.jpg"
-		*/
-
-		/*"Resources/Textures/right_vf.jpg",
+	};
+	std::vector<std::string> faces_finn
+	{
+	"Resources/Textures/right_vf.jpg",
 		"Resources/Textures/left_vf.jpg",
 		"Resources/Textures/top_vf.jpg",
 		"Resources/Textures/bottom_vf.jpg",
 		"Resources/Textures/front_vf.jpg",
 		"Resources/Textures/back_vf.jpg"
-		*/
-
-		/*"Resources/Textures/right_candy2.jpg",
+	};
+	std::vector<std::string> faces_candy
+	{
+		"Resources/Textures/right_candy2.jpg",
 		"Resources/Textures/left_candy2.jpg",
 		"Resources/Textures/top_candy2.jpg",
 		"Resources/Textures/bottom_candy2.jpg",
 		"Resources/Textures/front_candy2.jpg",
 		"Resources/Textures/back_candy2.jpg"
-		*/
-
-		/*"Resources/Textures/right_fire.jpg",
+	};
+	std::vector<std::string> faces_fire
+	{ "Resources/Textures/right_fire.jpg",
 		"Resources/Textures/left_fire.jpg",
 		"Resources/Textures/top_fire.jpg",
 		"Resources/Textures/bottom_fire.jpg",
 		"Resources/Textures/front_fire.jpg",
 		"Resources/Textures/back_fire.jpg"
-		*/
 	};
-	std::vector<std::string> faces1
-	{
-		"Resources/Textures/right.jpg",
-		"Resources/Textures/left.jpg",
-		"Resources/Textures/top.jpg",
-		"Resources/Textures/bottom.jpg",
-		"Resources/Textures/front.jpg",
-		"Resources/Textures/back.jpg"
-	};
+	
 
-	GLuint cubemapTexture = loadCubemap(faces);
-	GLuint cubemapTexture1 = loadCubemap(faces1);
+	GLuint cubemapTexture = loadCubemap(faces_ice);
+	GLuint cubemapTexture1 = loadCubemap(faces_slime);
+	GLuint cubemapTexture2 = loadCubemap(faces_finn);
+	GLuint cubemapTexture3 = loadCubemap(faces_candy);
+	GLuint cubemapTexture4 = loadCubemap(faces_fire);
 	std::vector<GLuint> cubemapTextures;
 	cubemapTextures.push_back(cubemapTexture);
 	cubemapTextures.push_back(cubemapTexture1);
-	cubemapTextures.push_back(cubemapTexture);
-	cubemapTextures.push_back(cubemapTexture1);
+	cubemapTextures.push_back(cubemapTexture2);
+	cubemapTextures.push_back(cubemapTexture3);
+	cubemapTextures.push_back(cubemapTexture4);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -295,6 +293,21 @@ int main()
 	texturesCubeMap1[0].id = cubemapTexture1;
 	texturesCubeMap1[0].type = "texture_diffuse";
 
+	std::vector<Texture> texturesCubeMap2;
+	texturesCubeMap2.push_back(Texture());
+	texturesCubeMap2[0].id = cubemapTexture2;
+	texturesCubeMap2[0].type = "texture_diffuse";
+
+	std::vector<Texture> texturesCubeMap3;
+	texturesCubeMap3.push_back(Texture());
+	texturesCubeMap3[0].id = cubemapTexture3;
+	texturesCubeMap3[0].type = "texture_diffuse";
+
+	std::vector<Texture> texturesCubeMap4;
+	texturesCubeMap4.push_back(Texture());
+	texturesCubeMap4[0].id = cubemapTexture4;
+	texturesCubeMap4[0].type = "texture_diffuse";
+
 	std::vector<Texture> textures4;
 	textures4.push_back(Texture());
 	textures4[0].id = tex4;
@@ -332,16 +345,20 @@ int main()
 	Mesh box = loader.loadObj("Resources/Models/cube.obj", textures);
 	
 	Mesh plane = loader.loadObj("Resources/Models/plane.obj", textures3);
-	Mesh skybox = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
-	Mesh skybox1 = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap1);
+	Mesh skybox_ice = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap);
+	Mesh skybox_slime = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap1);
+	Mesh skybox_finn = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap2);
+	Mesh skybox_candy = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap3);
+	Mesh skybox_fire = loader.loadObj("Resources/Models/sphere.obj", texturesCubeMap4);
 	//Mesh tree = loader.loadObj("Resources/Models/t1.obj",textures4);
 	Mesh sword = loader.loadObj("Resources/Models/Fantasy Sword Weapon OBJ.obj", textures5);
 	Mesh snowflake = loader.loadObj("Resources/Models/snowflake.obj",textures8);
 	//Mesh santa = loader.loadObj("Resources/Models/ChocoSantaClaus06.obj", textures6);
-	skybox.setup();
+	skybox_ice.setup();
 	
 	std::vector<Mesh> planeMeshes;
 	Mesh plane1= loader.loadObj("Resources/Models/plane.obj", textures3);
+	planeMeshes.push_back(plane1);
 	planeMeshes.push_back(plane1);
 	planeMeshes.push_back(plane1);
 	planeMeshes.push_back(plane1);
@@ -458,6 +475,17 @@ int main()
 
 	/////////////// END OF THE FOURTH SCENE ///////////////
 
+	/////////////// CREATING THE FIFTH SCENE ///////////////
+	scenes.push_back(new Scene(&window, &camera));
+	scenes[4]->AddMesh("tree", loader.loadObj("Resources/Models/t1.obj", textures4));
+	scenes[4]->AddShader("shader", &shader);
+	collider = new CylinderCollider(3.5, 100);
+	//auto interact = new InteractNone(new CylinderCollider(7, 100));
+	interact = new InteractPickup(new CylinderCollider(7, 100), scenes[4]->GetObjects(), &inventory);
+
+	scenes[4]->AddObject(Object("shader", "tree", glm::vec3(20.0f, -3.0f, 0.0f), glm::vec3(0.05f), collider, interact));
+
+	/////////////// END OF THE FIFTH SCENE ///////////////
 
 
 	Scene* currentScene = scenes[realmCounter];
@@ -775,7 +803,7 @@ int main()
 
 		// Draw the skybox
 		//skybox.draw2(skyboxShader, cubemapTexture);  // Assuming this method correctly sets up and draws the skybox
-		skybox.draw2(skyboxShader, cubemapTextures[realmCounter]);
+		skybox_ice.draw2(skyboxShader, cubemapTextures[realmCounter]);
 
 		glDepthFunc(GL_LESS);  // Restore the default depth function
 		
