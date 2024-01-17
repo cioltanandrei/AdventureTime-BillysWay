@@ -61,38 +61,38 @@ void processMouseMove2(GLFWwindow* window, Camera& camera, glm::vec2& lastMouseP
 std::vector<FILE*> files;
 
 FILE* stream;
-errno_t err = fopen_s(&stream, "Resources/Text/introduction.txt", "r");
+errno_t err = fopen_s(&stream, "Resources/Text/Scene1/introduction.txt", "r");
 
 
 FILE* stream1;
-errno_t err1 = fopen_s(&stream1, "Resources/Text/test.txt", "r");
+errno_t err1 = fopen_s(&stream1, "Resources/Text/Scene1/home_scene.txt", "r");
 
 FILE* stream2;
-errno_t err2 = fopen_s(&stream2, "Resources/Text/test1.txt", "r");
+errno_t err2 = fopen_s(&stream2, "Resources/Text/Scene1/final.txt", "r");
 
 FILE* stream3;
-errno_t err3 = fopen_s(&stream3, "Resources/Text/test2.txt", "r");
+errno_t err3 = fopen_s(&stream3, "Resources/Text/Scene2/Introduction.txt", "r");
 
 FILE* stream4;
-errno_t err4 = fopen_s(&stream4, "Resources/Text/test3.txt", "r");
+errno_t err4 = fopen_s(&stream4, "Resources/Text/Scene2/ice_scene.txt", "r");
 
 FILE* stream5;
-errno_t err5 = fopen_s(&stream5, "Resources/Text/test4.txt", "r");
+errno_t err5 = fopen_s(&stream5, "Resources/Text/Scene3/Introduction.txt", "r");
 
 FILE* stream6;
-errno_t err6 = fopen_s(&stream6, "Resources/Text/test5.txt", "r");
+errno_t err6 = fopen_s(&stream6, "Resources/Text/Scene3/slime_scene.txt", "r");
 
 FILE* stream7;
-errno_t err7 = fopen_s(&stream7, "Resources/Text/test6.txt", "r");
+errno_t err7 = fopen_s(&stream7, "Resources/Text/Scene4/Introduction.txt", "r");
 
 FILE* stream8;
-errno_t err8 = fopen_s(&stream8, "Resources/Text/test7.txt", "r");
+errno_t err8 = fopen_s(&stream8, "Resources/Text/Scene4/fire_scene.txt", "r");
 
 FILE* stream9;
-errno_t err9 = fopen_s(&stream9, "Resources/Text/test8.txt", "r");
+errno_t err9 = fopen_s(&stream9, "Resources/Text/Scene5/Introduction.txt", "r");
 
 FILE* stream10;
-errno_t err10 = fopen_s(&stream10, "Resources/Text/test9.txt", "r");
+errno_t err10 = fopen_s(&stream10, "Resources/Text/Scene5/candy_scene.txt", "r");
 
 FILE* stream11;
 errno_t err11 = fopen_s(&stream11, "Resources/Text/test10.txt", "r");
@@ -198,7 +198,7 @@ void RenderQuestUI()
 				int fileNo = realmCounter * 2 + 1;
 				readFromFile(files[fileNo]);
 
-				ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s \n Press Enter to cotinue", myString);
+				ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), "%s", myString);
 				if (ImGui::Button("Ok, bro!")) {
 					hasInteractedWithSceneNPC[realmCounter] = false;
 					interactedObjects.clear();
@@ -738,7 +738,7 @@ int main()
 	//////
 	auto collider5 = new CylinderCollider(20, 100);
 	auto interact5 = new InteractPickup(new CylinderCollider(40, 100), scenes[2]->GetObjects(), &inventory);
-	scenes[2]->AddObject(Object("shader", "diamond2", glm::vec3(45.0f, 2.0f, 0.0f), glm::vec3(0.199f), collider5, interact5));
+	scenes[2]->AddObject(Object("shader", "diamond2", glm::vec3(45.0f, 2.0f, 100.0f), glm::vec3(0.199f), collider5, interact5));
 	scenes[2]->AddMesh("slime", loader.loadObj("Resources/Models/slime.obj", textures_apple));
 	auto collider6 = new CylinderCollider(20, 100);
 	auto interact6 = new InteractNone(new CylinderCollider(40, 100), scenes[2]->GetObjects(), &interactedObjects);
@@ -756,14 +756,15 @@ int main()
 	scenes.push_back(new Scene(&window, &camera));
 	scenes[3]->AddShader("shader", &shader);
 	scenes[3]->AddMesh("fp", loader.loadObj("Resources/Models/FP.obj", textures_flame));
-	
+
 	auto collider7 = new CylinderCollider(20, 100);
 	auto interact7 = new InteractPickup(new CylinderCollider(40, 100), scenes[3]->GetObjects(), &inventory);
-	scenes[3]->AddObject(Object("shader", "fp", glm::vec3(55.0f, 5.0f, 10.0f), glm::vec3(3.0f), collider7, interact7));
-	scenes[3]->AddMesh("fire", loader.loadObj("Resources/Models/fire.obj", textures_flame));
+	scenes[3]->AddObject(Object("shader", "fp", glm::vec3(90.0f, 5.0f, 70.0f), glm::vec3(3.0f), collider7, interact7));
+	scenes[3]->AddMesh("slime", loader.loadObj("Resources/Models/slime.obj", textures_flame));
 	auto collider8 = new CylinderCollider(20, 100);
 	auto interact8 = new InteractNone(new CylinderCollider(40, 100), scenes[3]->GetObjects(), &interactedObjects);
-	scenes[3]->AddObject(Object("shader", "fire", glm::vec3(45.0f, 0.0f, 10.0f), glm::vec3(4000.0f), collider8, interact8));
+	//scenes[3]->AddObject(Object("shader", "fire", glm::vec3(25.0f, -15.5f, 10.0f), glm::vec3(4000.0f), collider8, interact8));
+	scenes[3]->AddObject(Object("shader", "slime", glm::vec3(25.0f, 0.0f, 15.0f), glm::vec3(10.0f), collider8, interact8));
 	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
 	interactiveNPCSInScenes.push_back("fire");
 	hasInteractedWithSceneNPC.push_back(false);
@@ -777,11 +778,11 @@ int main()
 	scenes[4]->AddMesh("pb", loader.loadObj("Resources/Models/candyP.obj", textures_candy));
 	auto collider9 = new CylinderCollider(20, 100);
 	auto interact9 = new InteractNone(new CylinderCollider(40, 100), scenes[4]->GetObjects(), &interactedObjects);
-	scenes[4]->AddObject(Object("shader", "pb", glm::vec3(45.0f, 0.0f, 0.0f), glm::vec3(15.0f), collider9, interact9));
+	scenes[4]->AddObject(Object("shader", "pb", glm::vec3(45.0f, 0.0f, 0.0f), glm::vec3(10.0f), collider9, interact9));
 	scenes[4]->AddMesh("page",loader.loadObj("Resources/Models/page.obj", textures_page));
 	auto collider10 = new CylinderCollider(20, 100);
 	auto interact10 = new InteractPickup(new CylinderCollider(40, 100), scenes[4]->GetObjects(), &inventory);
-	scenes[4]->AddObject(Object("shader", "page", glm::vec3(80.0f, 0.0f, 15.0f), glm::vec3(50.0f), collider10, interact10));
+	scenes[4]->AddObject(Object("shader", "page", glm::vec3(80.0f, 0.0f, 180.0f), glm::vec3(50.0f), collider10, interact10));
 	interactiveNPCSInScenes.push_back("pb");
 	hasInteractedWithSceneNPC.push_back(false);
 	Collectables.push_back({ "page", 1 });

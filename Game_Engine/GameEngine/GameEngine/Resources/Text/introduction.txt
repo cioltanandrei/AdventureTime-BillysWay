@@ -26,3 +26,14 @@ Jake: Look man, its easy. Use W,A,S,D to move, E to interact with objects and
       people and the mouse/(UP, DOWN, LEFT, RIGHT) to move your head around.
 
 Finn: Thanks bro!
+
+--------------------------------------
+
+Finn: Hey, Jake, I'm starving, man. My stomach's growling like crazy!
+
+Jake: (yawning) Yeah, I could go for a snack too. What do you feel like eating?
+
+Finn: (rubbing his belly) Something sweet, you know? Like, a pie would be awesome.
+
+Finn and Jake, now determined to satisfy their craving for pie, venture towards
+Tree Trunks' cozy home.
