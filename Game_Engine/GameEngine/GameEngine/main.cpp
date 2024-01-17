@@ -766,7 +766,7 @@ int main()
 	//scenes[3]->AddObject(Object("shader", "fire", glm::vec3(25.0f, -15.5f, 10.0f), glm::vec3(4000.0f), collider8, interact8));
 	scenes[3]->AddObject(Object("shader", "slime", glm::vec3(25.0f, 0.0f, 15.0f), glm::vec3(10.0f), collider8, interact8));
 	//auto interact = new InteractPickup(new CylinderCollider(7, 100), scenes[0]->GetObjects(), &inventory);
-	interactiveNPCSInScenes.push_back("fire");
+	interactiveNPCSInScenes.push_back("slime");
 	hasInteractedWithSceneNPC.push_back(false);
 	Collectables.push_back({ "fp", 1 });
 
